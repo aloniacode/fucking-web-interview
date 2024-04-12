@@ -6,7 +6,12 @@ Vue3 则是借助ES6新增的Proxy API 对对象属性进行劫持从而实现�
 
 React的响应式是依赖于虚拟DOM的DIFF算法以及自顶向下的单向数据流，当组件的内部的state发生变化，通过对比前后虚拟DOM从而触发render函数进行UI的变更。
 
-### document load 和 document ready的区别
+### window load 和 document ready的区别
+
+window.load事件是再整个页面以及所有依赖资源例如样式表和图片等都加载完时触发。
+
+Jquery中的document ready事件是在DOM树加载完时触发，不必等待其他依赖资源的加载。
+
 
 
 
@@ -44,7 +49,7 @@ DIFF算法的目的就是通过对比新旧的虚拟DOM树得出差异并以性�
 
 React的Diff策略：三个层次，同级比较。
 
-React只会比较新旧DOM树的同级节点，在Tree层次的比较时，不进行移动操作，如果相同位置的节点发生变化只进行删除和新增操作。（相比于创建和删除，移动操作有更大的性能损耗）。在组件层次比较时，会尽可能复用节点，例如某个节点发生改变但是它的子树没有变化，那么只需要更新发生改变的节点而子树复用。在元素层次比较时（例如列表），依赖于唯一标识Key来进行移动/删除操作。
+React只会比较新旧DOM树的同级节点，在Tree层次的比较时，不进行移动操作，如果相同位置的节点发生变化只进行删除和新增操作。（相比于创建和删除，移动操作有更大的性能损耗）。在组件层次比较时，会尽可能复用节点，例如某个节点发生改变但是它的子树没有变化，那么只需要更新发生改变的节点而子树复用。在元素层次比较时（例如列表），依赖于唯一标识Key来进行移动/删除操作,采用右移策略。
 
 ### zustand的原理？为什么在组件A修改了store中的state，组件B的UI也会更新？
  zustand = 发布订阅 + useSyncExternalStore
@@ -209,6 +214,28 @@ NodeJS中的事件循环：划分为六个阶段，也就是有六个宏任务�
 
 
 ### Webpack做过哪些优化？
+
+（个人使用不多，主要使用Vite）
+
+使用webpack 5.0以上的版本，更好的打包构建性能。
+
+优化打包速度：
+
+1. 多线程/多实例构建： thread-loader
+2. 缩小打包的作用域：例如使用exclude/include确定loader的规则范围；resolve.modules指明第三方模块的绝对路径，减少不必要的查找；resolve.extensions 尽可能减少后缀尝试的可能性。
+3. 减少执行构建的模块；合理设置noParse,忽略没有模块化的文件（没有import、require、define等语句）；合理配置IgnorePlugin，在构建时删除不需要的模块；合理配置externals,它会告诉webpack无需打包哪些库文件；合理设置loader的include/exclude，只对特定的模块使用Loader。
+4. 充分利用缓存提升二次构建的速度：babel-loader开启缓存；使用cache-loader、terser-webpack-plugin(v5版本自带)；webpack5 配置 cache.type开启磁盘缓存
+5. 使用DLLPlugin进行分包，使用 DllReferencePlugin(索引链接) 对 manifest.json 引用，让一些基本不会改动的代码先打包成静态资源，避免反复编译浪费时间。
+
+优化构建结果：
+
+1. 压缩代码：使用html-webpack-plugin压缩html;使用 optimize-css-assets-webpack-plugin或者css-minimizer-webpack-plugin（v5）压缩css；使用terser-webpack-plugin压缩js；使用image-webpack-loader压缩图片。
+2. 代码分割。
+3. Tree shaking.打包时在确保不影响功能的前提下删除没有使用的代码；
+4. GZIP。使用compression-webpack-plugin对静态资源进行gzip压缩。
+5. 作用域提升。生产环境下默认开启。
+
+
 
 ### 说一下Koa的洋葱模型？
 
