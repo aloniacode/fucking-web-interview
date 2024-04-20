@@ -16,7 +16,7 @@
 2. 复用逻辑。
 3. class组件的this不易理解，给使用者造成额外的心智负担。
 
-## 3.useEffect 和 useLayoutEffect 的执行区别
+## 3.useEffect 和 useLayoutEffect 的区别 以及使用场景
 
 ```js
 
@@ -42,6 +42,8 @@ useLayoutEffect的用法和useEffect一样，但是它们的setup回调执行的
 
 VDOM更新 -> DOM更新 -> useEffect
 VDOM更新 -> useLayoutEffect -> DOM更新
+
+使用场景：
 
 ## 4.Fiber架构的原理和工作模式？
 
@@ -110,7 +112,7 @@ function FiberNode(
 除此之外，React还实现了**双缓冲机制**。简单来讲，React在更新时会根据现有的fiber树（current tree）创建一个新的fiber树(workInProgress)，这个新的fiber树保存在内存中，在后台更新，current tree就是当前渲染在界面上的视图，它是RootFiber这个节点的子树。 当workInProgress tree完成更新后，RootFiber就指向了workInProgress tree, 此时workInProgress tree就成为了current tree， 它被渲染到界面上，而旧的current tree则变成了workInProgress tree。正是由于React同时维护着两棵fiber树，所以可以随时进行比较、中断和恢复，也使得React拥有优秀的渲染性能。
 
 
-![fiber_tree_double_cache](./images/fiber_tree_double_cache.png)
+![fiber_tree_double_cache](/fiber_tree_double_cache.png)
 
 
 **Fiber的工作流程**
@@ -129,7 +131,7 @@ React18中setState默认是**异步/批量**的，18版本以前在原生DOM事�
 
 批量：连续多次调用setState会合并成一个更新操作，UI只会重新渲染一次。
 
-![自动批处理](./images/react18_automatic_batching.png)
+![自动批处理](/react18_automatic_batching.png)
 
 原理：
 
@@ -142,8 +144,13 @@ React18中setState默认是**异步/批量**的，18版本以前在原生DOM事�
 1. 提升性能，避免每次调用setState都重新渲染组件。（性能损耗一般在虚拟DOM树diff过程）
 2. 避免state和props无法同步。如果setState是同步执行的，那么就会立即更新组件内部的state，但是render函数中传递的props还是旧值，这就导致了state和props的不一致。
 
+## 6.setState批量更新是如何实现的？
 
+## 7.useRef的原理和机制？为什么它不会导致UI重新渲染？/为什么它的值在组件的生命周期中是不变的？
 
-## 6.useRef的原理和机制？为什么它不会导致UI重新渲染？/为什么它的值在组件的生命周期中是不变的？
+## 8.React事件处理机制是怎么样的？16和17版本又有什么不同？
+
+## 9.React为什么在处理列表时推荐使用唯一的key属性？这个DIFF刷法有什么区别？
+
 
 
