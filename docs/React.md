@@ -43,11 +43,22 @@ useLayoutEffect的用法和useEffect一样，但是它们的setup回调执行的
 VDOM更新 -> DOM更新 -> useEffect
 VDOM更新 -> useLayoutEffect -> DOM更新
 
-使用场景：
+**useEffect**的使用场景：
+
+1. 副作用与DOM无关，例如数据获取、订阅操作等。
+2. 不需要立即同步读取或更改DOM。使用useEffect读取和更改DOM可能会出现闪烁。
+3. 性能优先。使用useEffect性能影响较小，不会阻塞浏览器的渲染，而useLayoutEffect则会。
+
+**useLayoutEffect**的使用场景：
+
+1. 需要立即同步读取或更改DOM。例如在渲染之前需要获取元素的大小或位置等属性并做修改。
+2. 防止闪烁。
+3. 模拟生命周期方法。使用useLayoutEffect可以模拟 componentDidMount、componentDidUpdate和componentWillUnmount的同步行为。
+
 
 ## 4.Fiber架构的原理和工作模式？
 
-JSX -> React.createElement() -> Fiber Node 
+React执行流程：JSX -> React.createElement() -> Fiber Node -> DOM render 
 
 **什么是fiber?**
 
@@ -145,6 +156,29 @@ React18中setState默认是**异步/批量**的，18版本以前在原生DOM事�
 2. 避免state和props无法同步。如果setState是同步执行的，那么就会立即更新组件内部的state，但是render函数中传递的props还是旧值，这就导致了state和props的不一致。
 
 ## 6.setState批量更新是如何实现的？
+
+React 中的 setState 批量更新是通过 enqueueSetState 函数实现的。当在组件中多次调用setState时，React并不会立即更新组件的状态，而是将状态更新请求添加到一个队列中，然后在合适的时机批量处理这些更新请求。
+
+```ts
+function batchedUpdates<A, R>(fn: (a: A) => R, a: A): R {
+  // 当前是否 批量更新赋值到 previous 状态上
+  const previousIsBatchingUpdates = isBatchingUpdates;
+  isBatchingUpdates = true;
+  try {
+    return fn(a); // 这里调用的是事件处理函数
+  } finally {
+    // 将过去上一次更新的 previous 存到全局变量 BatchingUpdates 上
+    isBatchingUpdates = previousIsBatchingUpdates;
+    // 当不是批量更新 而且不是在渲染阶段，那么state的值将会一次更新，调用 performSyncWork
+    if (!isBatchingUpdates && !isRendering) {
+      performSyncWork(); // 直接同步一起更新
+    }
+  }
+}
+
+```
+
+这种批量更新的机制可以确保在一个更新周期内，只进行一次更新操作，从而避免不必要的重复渲染。这对于性能优化至关重要，特别是在处理大量状态更新时。
 
 ## 7.useRef的原理和机制？为什么它不会导致UI重新渲染？/为什么它的值在组件的生命周期中是不变的？
 
