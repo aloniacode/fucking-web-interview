@@ -5,10 +5,16 @@
 1. 名称不同：原生事件名称都是小写，合成事件的名称是驼峰式的。
 2. 使用方式不同：原生直接使用字符串绑定，合成事件使用大括号绑定。
 3. 阻止浏览器默认行为： 原生的事件函数返回false ，合成事件使用preventDefault()。
+4. 事件对象不同，React合成事件的事件对象可以通过nativeEvent属性访问原生事件对象。
+4. React合成事件没有像原生事件一样直接绑定到对应的DOM上，而是利用事件委托和事件冒泡统一注册在顶层（document/root element）。
 
-为什么React要使用合成事件？
+那为什么React要使用合成事件？
 
-配合VDOM模拟原生事件 实现跨平台 所有事件都放在一个数组中。
+1. 抹平兼容性差异。
+2. 实现跨平台。
+3. 可以自定义事件。
+4. 优化，利用事件委托都将事件代理到document/root element，减少内存开销。
+5. 干预事件的分发，依托fiber架构可以干预事件的分发来提升用户体验。
 
 ## 2.为什么使用hooks？
 
@@ -182,7 +188,76 @@ function batchedUpdates<A, R>(fn: (a: A) => R, a: A): R {
 
 ## 7.useRef的原理和机制？为什么它不会导致UI重新渲染？/为什么它的值在组件的生命周期中是不变的？
 
+useRef函数接受一个初始值initialValue，并返回一个可变的ref对象，这个对象上面存在一个属性current,默认值就是initialValue。和useState不同的是，useState返回的是不可变的值，每一次render都是新值，而ref对象在组件的生命周期中不会改变，其current属性可以被赋任意值，也就是说无论何时访问ref对象都能获取到最新值。
+
+当初始化useRef时实际是调用内部的mountRef方法，流程如下：
+
+```ts
+function mountRef<T>(initialValue: T): {|current: T|} {
+  const hook = mountWorkInProgressHook();
+  const ref = {current: initialValue};
+  hook.memoizedState = ref;
+  return ref;
+}
+```
+
+1. 调用**mountWorkInProgressHook**创建一个React内部的hook对象，并按照顺序加入到构建的hook链表中。
+2. 创建一个ref对象，将初始化值赋值给该对象的current属性。
+3. 将ref对象存储在hook对象的memoizedState属性上。
+4. 最后返回ref对象。
+
+当修改ref对象的current值时，流程如下：
+
+```ts
+function updateRef<T>(initialValue: T): {|current: T|} {
+  const hook = updateWorkInProgressHook();
+  return hook.memoizedState;
+}
+```
+
+1. 通过updateWorkInProgressHook方法拿到函数组件加载时对应的hook对象。
+2. 返回hook对象的memoizedState属性值。
+
+通过上面原理可以知道，组件更新时引用的对象永远是同一个ref对象， 而不会重新创建新的ref对象。这是因为hook对象都是存储在组件的fiber对象上，这确保了ref对象不可变，这样在组件的生命周期内ref对象的current值永远都是被赋值的最新值，除了手动修改current值之外它是不会改变的。
+
 ## 8.React事件处理机制是怎么样的？16和17版本又有什么不同？
+
+React自己实现了一套事件系统，它的事件是合成事件，主要的目的是抹平不同浏览器之间的兼容性差异。
+
+机制总结： **顶层注册，存储回调，事件派发**。
+
+**顶层注册**：React合成事件机制采用了事件委托的思想。在React组件挂载时会根据组件内声明的事件类型（onClick,onChange等）在document上注册相应依赖的原生事件（使用addEventListener注册，17版本后则是在root element上注册），并且捕获阶段和冒泡阶段的事件都会注册。在注册事件时会指定统一的回调函数dispatchEvent,也就是说同一种类型的事件它的回调函数是一样的，这样就减少了内存开销。
+
+**存储回调**： React为了在触发事件时可以查找到实际对应的回调函数去执行，会把组件内的所有事件统一地存放到一个对象中（listenerBank）。而存储方式如下所示，首先会根据事件类型分类存储，例如 click 事件相关的统一存储在一个对象中，回调函数的存储采用键值对（key/value）的方式存储在对象中，key 是组件的唯一标识 id，value 对应的就是事件的回调函数。
+
+```js
+// listenerBank
+{
+  click: {
+    key1: fn,
+    key2: fn,
+    ...
+  }
+  change:{
+    key1:fn,
+    key2:fn,
+    ...
+  }
+}
+```
+**事件派发**： React的事件触发只会发生在DOM事件流的冒泡阶段，因为注册时默认在冒泡阶段执行。流程如下：
+
+1. 触发事件，开始DOM事件流，事件捕获 -> 处于目标阶段 -> 事件冒泡。
+2. 当事件冒泡到document（17版本是root element）时，触发统一的分发函数。
+3. 根据原生事件对象nativeEvent找到当前节点（事件触发节点）对应的React Component对象。
+4. 事件合成： 根据当前事件类型生成对应的合成对象 -> 封装原生事件对象和冒泡机制 -> 查找当前元素以及它所有父级 -> 在listenerBank中查找事件回调函数并合成到 events 中。
+5. 批量执行合成事件（events）内的回调函数。
+6. 如果没有使用**stopImmediatePropagation**方法阻止冒泡，会将继续进行 DOM 事件流的冒泡（从 document 到 window），否则结束事件触发。
+
+> 注意： 阻止冒泡如果使用stopPropagation方法时，当document/root element上还有同类型的其他事件时也会被触发执行，但是window上不会被执行。
+
+由此可知，由于React的事件委托机制，React组件对应的DOM节点上的原生事件触发时机总是在React组件内注册的合成事件之前。
+
 
 ## 9.React为什么在处理列表时推荐使用唯一的key属性？这个DIFF刷法有什么区别？
 
