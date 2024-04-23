@@ -31,4 +31,9 @@ export default defineConfig({
     },
   },
   lastUpdated: true,
+  vite: {
+    server: {
+      open: true,
+    },
+  },
 });
