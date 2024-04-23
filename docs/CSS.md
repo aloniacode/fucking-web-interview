@@ -16,4 +16,11 @@
 
 ## 8.@import和link标签都是加载CSS的，它们有什么区别？
 
+1. 加载CSS方式差异。@import是CSS方式，link是HTML的方式。
+1. 兼容性差异。@import是CSS2.1才有的语法，某些浏览器可能不兼容，而link标签不存在兼容性问题。
+2. 加载顺序差异。link是并行加载，在HTML解析时遇到link时不会被阻塞，而@import是串行加载，只能在CSS文件顶部使用，并且如果引用过多会导致文档样式短暂失效（FOUC）。
+3. 功能性差异。@import只能用来加载CSS，而link除了加载CSS文件外还可以定义RSS,rel连接属性等等。
+
+总结： link优于@import
+
 ## 9.原子化CSS和使用普通的CSS有什么区别？它有哪些优势和缺点？
