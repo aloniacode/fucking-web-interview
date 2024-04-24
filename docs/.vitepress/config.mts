@@ -4,6 +4,7 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
   title: "Fuck Interview",
   description: "前端面试八股文笔记",
+  head: [["link", { rel: "icon", type: "image/x-icon", href: "/favicon.png" }]],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: "/favicon.png",
