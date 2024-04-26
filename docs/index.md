@@ -12,11 +12,11 @@ hero:
       link: /HTML
 
 features:
-  - title: 学习
-    details: 每天看一看，防止不会写Hello World
-  - title: 自制 
-    details: 每天敲代码何尝不是一种奖励
-  - title: 搞钱
-    details: 马云说：我对钱不感兴趣，我说：fun peach
+  - title: 学习 Learning
+    details: 编程不止CRUD
+  - title: 思考 Thinking 
+    details: Why Why Why
+  - title: 实践 Practice
+    details: 想的再多不如敲一行代码
 ---
 
