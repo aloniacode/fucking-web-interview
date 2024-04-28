@@ -30,7 +30,49 @@ React的响应式是依赖于虚拟DOM的DIFF算法以及自顶向下的单向�
 
 总的来说，Vue数据双向绑定的核心是通过`Watcher`实现数据与视图的同步。当数据变化时，通过`Watcher`检测到并通知相关视图更新；当用户与视图交互时，通过`Watcher`更新相关的数据。这样就实现了数据和视图的双向绑定。
 
-## 6.Vue中$nextTick的原理是什么？它有哪些用途？
+## 6.Vue中$nextTick/nextTick的原理是什么？它有哪些用途？
+
+`nextTick`存在的原因： Vue采用的是**异步更新策略**，当监听到数据发生变化后不会立即更新DOM，而是开启一个任务队列，将同一事件循环中的数据变更加入队列中，等循环结束后在下一轮事件循环中遍历队列一次性更新。这个机制基于浏览器的事件循环，这样做的好处在于可以将多次的数据更新合并到一次，减少操作DOM的次数，提高性能。
+
+原理：将传入的回调函数包装成异步任务（分为微任务和宏任务），为了尽快执行所以默认优先包装成微任务，然后加入异步队列（微任务队列，等在下一次事件循环时调用。
+
+> `nextTick`提供了Promise.then、MutationObserver、setImmediate、setTimeout(fn,0)四种方法用于处理传入的回调函数，优先级从左到右依次降低，如果当前环境不支持某个方法就降级处理。
+
+源码实现原理：
+
+1. 使用callbacks数组存放需要在下一个事件循环中执行的回调函数，并使用pending标志标识当前是否已经向队列中添加了任务，如果添加了则置为true，当任务被执行时设置为false。
+
+2. 如果`nextTick`没有传入回调函数并且当前环境支持Promise就会的返回一个Promise，该Promise的then中可以获取到最新的DOM。
+
+3. 使用`flushCallbacks`方法用于执行`callbacks`数组中的回调，它首先会将pending设置为false并拷贝`callbacks`后清空`callbacks`（用于处理`nextTick中嵌套`nextTick`的情况）,然后会遍历拷贝`callbacks`数组并依次执行回调。
+
+
+应用场景：如果数据变化后需要立即使用到最新的DOM，就在nextTick的回调中处理，亦或者不传入回调并使用`await`等待`nextTick`，这样后续的代码就能获取到最新的DOM。
+
+```vue
+<script setup>
+import { ref, nextTick } from 'vue'
+
+const count = ref(0)
+
+async function increment() {
+  count.value++
+
+  // DOM 还未更新
+  console.log(document.getElementById('counter').textContent) // 0
+
+  await nextTick()
+  // DOM 此时已经更新
+  console.log(document.getElementById('counter').textContent) // 1
+}
+</script>
+
+<template>
+  <button id="counter" @click="increment">{{ count }}</button>
+</template>
+
+```
+
 
 ## 7.说说Vue中虚拟DOM Diff的原理？
 
