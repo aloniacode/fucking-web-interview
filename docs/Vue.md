@@ -185,9 +185,57 @@ async function increment() {
 </template>
 
 ```
+## 7.说说Vue中虚拟DOM diff的原理？
+
+和React diff类似，Vue diff算法也遵循以下三个原则：
+
+- 同级比较
+
+- 新旧节点类型不同时直接删除再创建
+
+- 用key作为新老节点的标识符 
+
+同级比较分为以下两种情况：
+
+- 单节点diff: 基于上述原则，先比较key是否相同，如果相同再查看类型是否相同，都相同则复用，否者直接删除老节点再创建新节点。
+
+- 多节点diff：vue2中采用**双端diff**算法（类似于双指针），而vue3中则使用**快速diff**算法。
+
+**双端diff**:
+
+![vue_diff](/vue_diff.png)
+
+第一轮遍历：对于新旧节点分别设置四个指针：`startIndex`指向未处理的第一个节点,`endIndex`指向未处理的最后一个节点。每一次遍历都会进行最多四次的比较，也就是新旧的`startIndex`和`endIndex`两两比较:
+
+- new `startIndex`对比 old `startIndex`
+
+- new `endIndex`对比 old `endIndex`
+
+- new `startIndex`对比 old `endIndex`
+
+- new `endIndex`对比 old `startIndex`
+
+如果其中一种匹配成功则移动相应的指针，指针**由两边向中间移动**。
+
+> Vue再diff过程中进行节点的更新、创建、删除和移动
+
+如果以上四种情况都没有匹配成功，则循环遍历旧节点，找到Key值相同的旧节点(为了避免重复遍历，使用`Map`进行缓存)：
+
+- 如果Key值相同，但`vnode`类型不一致，则创建新的节点置于old startIndex之前。
+
+- 如果Key值相同，`vnode`类型一致，则直接将旧节点插入old startIndex之前。
+
+- 如果Key值没有再老节点出现过，则认为是新创建节点，置于old startIndex之前。
+
+这一轮遍历结束后，节点的移动都会被处理，对应的双指针只剩下两种情况。
+
+第二轮遍历： 
+
+- old `startIndex` > old `endIndex`：说明旧节点之前就走完了，新节点还有尚未处理的DOM节点，需要批量创建。
+
+- new `startIndex` > new `endIndex`: 说明新节点处理完了，旧节点还存在多余的DOM节点，需要批量删除。
 
 
-## 7.说说Vue中虚拟DOM Diff的原理？
 
 ## 8.Vue中key的作用是什么？为什么需要绑定key？
 
