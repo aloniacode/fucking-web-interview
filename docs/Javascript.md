@@ -99,3 +99,11 @@ funcArr[2]() // 3
 
 ## 15.实现深拷贝的方法有哪些？
 
+## 16.for...of和for...in的区别？
+
+**for...in**：一般用于遍历对象的非Symbol**可枚举属性**以及**继承的可枚举属性**（来自原型链）,也就是说它会遍历原型。
+
+**for...of**: 用于遍历**可迭代对象**，只要对象有`Symbol.iterator`属性并实现了相应的`Iterator`就能被遍历。例如内置的Array、Map、Set、String、TypedArray、函数的 arguments 对象、NodeList 对象等等。
+
+> 因此， Set可以通过使用forEach、for...of、转为数组后遍历三种方式进行遍历。
+

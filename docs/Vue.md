@@ -254,3 +254,70 @@ async function increment() {
 当然，在非静态列表的场景中还是尽可能避免使用index作为`key`,当数据更新或DOM出现新增删除或移动时可能会导致index发生变化，从而导致Vue认为某些节点发生变化而重现渲染，甚至会出现意外的BUG。index作为`key`不能保证唯一性和稳定性，故而不建议使用。
 
 ## 10.说说Pinia的工作原理？他如何管理和维护状态？
+
+基本原理： 
+
+- `createPinia`: `createPinia`方法创建了一个pinia对象并添加了`_s`属性，这个`_s`属性是一个`Map`对象，用来保存后续使用`defineStore`创建的store,由于pinia也是vue的一个插件，因此pinia对象也定义了一个install方法用于将创建的pinia对象通过`provide`注入到每一个组件中，这样在任意组件中可以通过`inject`获取到pinia对象。
+
+```js
+export function createPinia(){
+    const pinia = {
+        _s: new Map(),
+        install(app){
+            app.provide(symbolKey,pinia) // symbolKey是一个symbol类型
+        }
+    }
+    return pinia
+}
+
+```
+
+- `defineStore`: 和`Vuex`不同的是`Pinia`定义的每一个store是相互独立不影响的。`defineStore`方法会创建一个使用`reactive`包裹的对象，这就是为什么store数据具有响应式。然后将通过参数传递进来的state,getters,actions进行处理合并到store对象上，最后将store对象挂载到pinia对象的`_s`属性上，id为key值，store为value值。由此可见，` Pinia`可以跨组件状态共享就是因为每个store都是单例模式。
+
+```js
+export function defineStore (
+    id,
+    {
+        state,
+        getters,
+        actions
+    }
+){
+    const store = reactive({})
+    // 将state设置到store上
+    if(state && typeof state === 'function'){
+        const _state = state()
+        for (let key in _state){
+            store[key] = _state[key]
+        }
+    }
+    //为什么是computed请看官网https://pinia.vuejs.org/zh/core-concepts/#setup-stores
+    // 将getters设置到store上
+    if(getters && Object.keys(getters).length > 0){
+        for (let getter in getters){
+            store[getter] = computed(getters[getter].bind(store,store))
+        }
+    }
+    function wrapAction(methodName){
+        return function(){
+            actions[methodName].apply(store,arguments)
+        }
+    }
+
+    // 将actions设置到store上
+    if(actions && Object.keys(actions).length > 0){
+        for(let methodName in actions){
+            store[methodName] = wrapAction(methodName)
+        }
+    }
+    return ()=>{
+        const pinia = inject(symbolKey);
+        if(!pinia._s.has(id)){
+            pinia._s.set(id,store)
+        }
+        const _store = pinia._s.get(id)
+        return _store
+    }
+}
+
+```
