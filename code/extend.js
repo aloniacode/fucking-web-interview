@@ -62,7 +62,7 @@ const p = {
 
 const c4 = Object.create(p);
 c4.name = "oliva";
-console.log(c4);
+console.log(c4.age);
 console.log(c4.getName());
 
 // 5. 寄生式继承 在原型式的基础上进行增强 可以添加额外的方法 但依旧存在改变原型式继承的缺点

@@ -40,9 +40,159 @@
 
 ## 4.什么是作用域链？
 
+作用域链是在JavaScript中用于解析标识符（变量名、函数名等）的一种机制。在JavaScript中，每个函数都有自己的作用域，作用域链是由嵌套的作用域构成的链式结构，用于确定标识符的查找顺序。
+
+当代码在函数内部引用一个变量时，JavaScript引擎会首先在当前函数的作用域中查找该变量。如果找不到，它会沿着作用域链向上一级作用域查找，直到找到该变量或达到全局作用域。如果在全局作用域中仍然找不到，则会抛出 ReferenceError 错误。
+
+作用域链的形成是由函数创建时确定的，它基于函数定义时所处的位置来决定。当函数被创建时，它会“记住”自己被创建时所处的作用域链，包括它所在的函数作用域和全局作用域。
+
+作用域链的机制保证了在JavaScript中变量的访问顺序，它使得内部函数可以访问外部函数的变量，但外部函数无法访问内部函数的变量。这种机制也是闭包（Closure）能够正常工作的基础之一。
+
 ## 5.说一下原型以及原型链？为什么它们被设计在JavaScript中？
 
+在JavaScript中，每个对象都有一个原型（prototype），原型是一个对象，包含可供其他对象继承的属性和方法。通过原型，对象可以共享属性和方法，实现属性和方法的复用，节省内存空间。
+
+原型链是一种对象之间的关系链，通过原型链，对象可以访问其他对象的属性和方法。原型链实现了对象之间的继承关系，使得子对象可以继承父对象的属性和方法。
+
+它们被设计的主要原因就是**实现面向对象编程**。原型链允许动态地添加、修改原型对象的属性和方法，从而实现动态继承和多态性。
+
+
 ## 6.JS中如何实现继承？
+
+有六种方式实现继承，分别是原型链继承、构造函数继承、组合继承、原型式继承、寄生式继承、寄生组合式继承。如果按照实现方式划分，这种六种可以依据是否使用`Object.create`而分为两类。
+
+1. 原型链继承。
+
+缺点：子类的实例共享同一个原型，存在副作用。
+
+```js
+function Parent() {
+    this.name = 'Parent';
+}
+
+function Child() {
+    this.age = 10;
+}
+
+Child.prototype = new Parent();
+
+var child = new Child();
+console.log(child.name); // 输出：Parent
+```
+
+2. 构造函数继承。
+
+优缺点：父类的属性不会共享，但是父类的原型的属性和方法无法被继承。
+
+```js
+function Parent(name) {
+    this.name = name;
+}
+
+function Child(name, age) {
+    Parent.call(this, name);
+    this.age = age;
+}
+
+var child = new Child('Child', 10);
+console.log(child.name); // 输出：Child
+```
+3. 组合继承。
+
+优缺点：结合原型链继承和构造函数继承，但是父类多构造了一次，造成性能开销。
+
+```js
+function Parent(name) {
+    this.name = name;
+}
+
+function Child(name, age) {
+    Parent.call(this, name);
+    this.age = age;
+}
+
+Child.prototype = new Parent();
+
+var child = new Child('Child', 10);
+console.log(child.name); // 输出：Child
+```
+
+4. 原型式继承。
+
+主要是借助Object.create()，以一个现有对象作为原型，创建一个新对象。缺点很明显，`Object.create`是浅拷贝，多个实例的引用类型是共享的，存在副作用。
+
+```js
+const p = {
+  name: "lee",
+  age: 25,
+  getName() {
+    return this.name;
+  },
+};
+
+const c4 = Object.create(p);
+c4.name = "oliva";
+console.log(c4.age) // 25
+console.log(c4.getName()); // oliva
+```
+5. 寄生式继承。
+
+在原型式的基础上进行增强，可以添加额外的方法，但依旧存在改变原型式继承的缺点。
+
+```js
+const p2 = {
+  name: "lee",
+  age: 25,
+  getName() {
+    return this.name;
+  },
+};
+
+function clone(original) {
+  const instance = Object.create(original);
+  instance.getAge = function () {
+    return this.age;
+  };
+  return instance;
+}
+const c5 = clone(p2);
+
+console.log(c5.getName()); // lee
+console.log(c5.getAge()); // 25
+```
+
+6. 寄生组合式继承。
+
+借助`Object.create`方法在前面五种方法上优化，是最优的继承解决方式。
+
+```js
+function clone2(parent, child) {
+  child.prototype = Object.create(parent);
+  child.prototype.constructor = child;
+}
+
+function Parent6() {
+  this.name = "parent6";
+  this.play = [1, 2, 3];
+}
+Parent6.prototype.getName = function () {
+  return this.name;
+};
+function Child6() {
+  Parent6.call(this);
+  this.friends = "child5";
+}
+
+clone2(Parent6, Child6);
+
+Child6.prototype.getAge = function () {
+  return this.age;
+};
+
+const c6 = new Child6();
+console.log(c6.play); // [1,2,3]
+```
+> ES6中extends关键字的实现就是寄生组合式继承
 
 ## 7.防抖和节流的区别？如何实现？应用场景有哪些？
 
