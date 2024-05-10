@@ -200,6 +200,102 @@ console.log(c6.play); // [1,2,3]
 
 节流： 一段时间内频繁触发的操作，只执行一次。
 
+**防抖函数-不立即执行**：
+
+```js
+function debounce(func, wait) {
+    let timeout;
+    return function () {
+        let context = this; // 保存this指向
+        let args = arguments; // 拿到event对象
+        clearTimeout(timeout)
+        timeout = setTimeout(function(){
+            func.apply(context, args)
+        }, wait);
+    }
+}
+```
+
+**防抖函数-立即执行**：
+
+```js
+function debounce(func, wait, immediate) {
+    let timeout;
+    return function () {
+        let context = this;
+        let args = arguments;
+        if (timeout) clearTimeout(timeout); // timeout 不为null
+        if (immediate) {
+            let callNow = !timeout; // 第一次会立即执行，以后只有事件执行后才会再次触发
+            timeout = setTimeout(function () {
+                timeout = null;
+            }, wait)
+            if (callNow) {
+                func.apply(context, args)
+            }
+        }else {
+            timeout = setTimeout(function () {
+                func.apply(context, args)
+            }, wait);
+        }
+    }
+}
+```
+
+**节流函数-时间戳写法**：事件会立即执行，停止触发后无法再次执行。
+
+```js
+function throttled(fn, delay = 500) {
+    let oldtime = Date.now()
+    return function (...args) {
+        let newtime = Date.now()
+        if (newtime - oldtime >= delay) {
+            fn.apply(null, args)
+            oldtime = Date.now()
+        }
+    }
+}
+
+```
+
+**节流函数-定时器写法**：delay毫秒后第一次执行，第二次事件停止触发后依然会再一次执行。
+
+```js
+function throttled(fn, delay = 500) {
+    let timer = null
+    return function (...args) {
+        if (!timer) {
+            timer = setTimeout(() => {
+                fn.apply(this, args)
+                timer = null
+            }, delay);
+        }
+    }
+}
+```
+
+**使用时间戳和定时器一起实现的更加精确的节流函数**：
+
+```js
+function throttled(fn, delay) {
+    let timer = null
+    let starttime = Date.now()
+    return function () {
+        let curTime = Date.now() // 当前时间
+        let remaining = delay - (curTime - starttime)  // 从上一次到现在，还剩下多少多余时间
+        let context = this
+        let args = arguments
+        clearTimeout(timer)
+        if (remaining <= 0) {
+            fn.apply(context, args)
+            starttime = Date.now()
+        } else {
+            timer = setTimeout(fn, remaining);
+        }
+    }
+}
+```
+
 ## 8.什么是闭包？它有什么作用/应用场景？
 
 > MDN: 闭包（closure）是一个函数以及其捆绑的周边环境状态（lexical environment，词法环境）的引用的组合。换而言之，闭包让开发者可以从内部函数访问外部函数的作用域。在 JavaScript 中，闭包会随着函数的创建而被同时创建。
@@ -253,6 +349,18 @@ funcArr[2]() // 3
 
 ## 9.如何解决“回调地狱”问题？
 
+"回调地狱"是指多层嵌套的回调函数导致代码难以维护和理解的情况。为了解决回调地狱问题，可以采用以下几种方法：
+
+1. 使用 Promise 对象：Promise 是一种用于处理异步操作的对象，它可以更清晰地表达异步操作的状态和结果。通过使用 Promise，可以避免多层嵌套的回调函数，将异步操作串联起来，使代码更易读。
+
+2. 使用 async/await：async/await 是 ES2017 引入的异步编程新特性，用于更简洁地处理异步操作。async 函数返回一个 Promise 对象，await 可以暂停 async 函数的执行，等待 Promise 对象的状态改变。使用 async/await 可以让异步代码看起来像同步代码，避免回调地狱。
+
+3. 使用事件监听：将异步操作封装成事件，通过事件监听器来处理异步操作的结果，可以减少回调函数的嵌套。这种方式适用于需要处理多个异步操作结果的情况。
+
+4. 模块化和拆分功能：将复杂的功能拆分成多个小的模块或函数，每个模块只负责一个特定的功能，避免在一个函数中处理过多的逻辑和嵌套。
+
+5. 使用第三方库：一些第三方库如`RxJS`、`Async.js`等提供了更多的工具和方法来处理异步操作，可以帮助简化异步代码的书写。
+
 ## 10.什么是Promise?它的作用是什么？
 
 ## 11.什么是生成器（Generator）以及它在异步编程中如何被利用？
@@ -263,7 +371,19 @@ funcArr[2]() // 3
 
 ## 14.深拷贝和浅拷贝的区别？
 
+- 浅拷贝：浅拷贝是指创建一个新的对象或数组，新对象的属性或元素和原对象相同，但属性值或元素的引用仍然指向原对象中的值。换句话说，浅拷贝只复制对象或数组的第一层结构，而不会复制嵌套的对象或数组。
+
+- 深拷贝：深拷贝是指创建一个新的对象或数组，并且递归地复制原对象或数组的所有嵌套对象和数组，确保新对象与原对象完全独立，互不影响。
+
 ## 15.实现深拷贝的方法有哪些？
+
+1. 递归实现。通过递归遍历对象或数组的所有属性，对每个属性进行复制。这种方法可以处理任意深度的嵌套结构，但需要注意处理循环引用的情况。
+
+2. JSON 序列化与反序列化：利用 JSON.stringify 将对象序列化为 JSON 字符串，再用 JSON.parse 将 JSON 字符串反序列化为新的对象。这种方法简单易用，但无法处理特殊类型如函数、正则表达式等，同样对于循环引用的情况不适用。
+
+3. 使用第三方库：一些第三方库如 Lodash 的 `_.cloneDeep()` 方法可以实现深拷贝，且处理了更多特殊情况，如循环引用、Symbol 类型等。
+
+4. 使用`structuredClone` API，它是Web API之一，无法处理特殊类型如函数、正则表达式等。它不是JavaScript语言本身的特性——相反，它是浏览器和任何其他实现了`window`这样全局对象的JavaScript运行时的一个特性。
 
 ## 16.for...of和for...in的区别？
 
