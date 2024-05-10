@@ -2,7 +2,7 @@
 
 ## 1.有几种数据类型？
 
-基本类型：String,Number,Boolean,Symbol,Bigint,null,undefined
+基本类型：String,Number,Boolean,Symbol,BigInt,Null,Undefined
 
 引用类型：Array,Object,Function,Date,RegExp
 
