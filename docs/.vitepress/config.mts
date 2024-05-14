@@ -28,7 +28,7 @@ export default defineConfig({
       },
     ],
     footer: {
-      copyright: "Copyright © 2024 Chenbinli",
+      copyright: "Copyright © 2024 Chenbin Li",
     },
   },
   lastUpdated: true,
