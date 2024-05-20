@@ -2,9 +2,9 @@
 
 ## 1.有几种数据类型？
 
-基本类型：String,Number,Boolean,Symbol,BigInt,Null,Undefined
+基本类型：String , Number , Boolean , Symbol , BigInt , Null , Undefined 。
 
-引用类型：Array,Object,Function,Date,RegExp
+引用类型：Array , Object , Function , Date , RegExp 。
 
 > 实际上引用类型只有Object，Array,Function,Date,RegExp都是特殊的对象
 
@@ -393,7 +393,7 @@ Promise表示异步操作最终的完成（或失败）以及其结果值，它�
 
 ## 11.什么是生成器（Generator）以及它在异步编程中如何被利用？
 
-生成器（Generator）是 ES6 中引入的一种特殊类型的函数，它可以在函数执行过程中暂停，并且可以在暂停的地方恢复执行。生成器通过使用 function* 关键字来定义，内部使用 yield 关键字来暂停函数的执行并返回一个值。
+生成器（Generator）是 ES6 中引入的一种特殊类型的函数，它可以在函数执行过程中暂停，并且可以在暂停的地方恢复执行。生成器通过使用 `function*`关键字来定义，内部使用 ` yield `关键字来暂停函数的执行并返回一个值。
 
 在异步编程中，生成器可以与`Promise`结合使用，以实现更灵活的异步操作。通过生成器函数和`yield`关键字，可以编写更清晰、易读的异步代码，避免回调地狱和复杂的`Promise`链式调用。
 
@@ -473,7 +473,7 @@ promise.then(result => {
 
 > MDN: 数组解构调用右侧的迭代协议。因此，任何可迭代对象（不一定是数组）都可以解构。
 
-对于任何可迭代对象（不一定是数组），它们之所以可以进行解构赋值，是因为 JavaScript 中的解构赋值机制是基于迭代器协议（Iterator Protocol）实现的。迭代器协议定义了一个 next() 方法，用于在对象上进行迭代，每次调用 next() 方法都会返回一个包含 value 和 done 属性的对象。value 表示当前迭代的值，done 表示迭代是否结束。
+对于任何可迭代对象（不一定是数组），它们之所以可以进行解构赋值，是因为 JavaScript 中的解构赋值机制是基于迭代器协议（Iterator Protocol）实现的。迭代器协议定义了一个`next()`方法，用于在对象上进行迭代，每次调用`next()`方法都会返回一个包含 value 和 done 属性的对象。value 表示当前迭代的值，done 表示迭代是否结束。
 
 当对一个可迭代对象进行解构赋值时，JavaScript 引擎会自动调用该对象的迭代器（即 `Symbol.iterator` 方法），然后根据迭代器返回的值进行解构赋值操作。这使得除了数组外，其他实现了迭代器协议的对象（比如 Set、Map、字符串等）也可以进行解构赋值。
 

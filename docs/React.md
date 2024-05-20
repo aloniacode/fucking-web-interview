@@ -120,11 +120,11 @@ function FiberNode(
 
 **为什么需要Fiber?**
 
-16.8版本之前的React使用递归的方式处理组件树更新（堆栈调和Stack Reconciliation）,这种方式一旦开始就无法中断，直到整个组件树被遍历完。在处理复杂结构和海量数据的情况下可能会导致主线程被阻塞，使得应用无法及时响应用户的交互或者其他高优先级的任务。而fiber树则是一种链表结构，React在处理每一个fiber节点时都会判断是否有足够的时间完成这个节点的工作，并在必要时中断和恢复。
+16.8版本之前的React使用递归的方式处理组件树更新（堆栈调和Stack Reconciliation）,这种方式一旦开始就无法中断，直到整个组件树被遍历完。在处理复杂结构和海量数据的情况下可能会导致主线程被阻塞，使得应用无法及时响应用户的交互或者其他高优先级的任务。而fiber树则同时具有链表结构，React在处理每一个fiber节点时都会判断是否有足够的时间完成这个节点的工作，并在必要时中断和恢复。
 
  **Fiber工作原理**
 
-借由fiber node的结构可以看出，整个fiber树实际上一个链表树，既有链接属性，又有树的结构。得益于这样的特性，使得React在遍历整棵fiber树时可以知道从哪里开始，哪里停止，又在哪里继续，这就是fiber树可以中断和恢复的前提条件。其中的`memoizedProps`、`pendingProps` 和 `memoizedState` 字段让React知道组件的上一个状态和即将应用的状态。通过比较这些值，React可以决定组件是否需要更新，从而避免不必要的渲染，提高性能。flags 和 subtreeFlags 字段标识Fiber及其子树中需要执行的副作用，例如DOM更新、生命周期方法调用等。React会积累这些副作用，然后在Commit阶段一次性执行，从而提高效率。
+借由fiber node的结构可以看出，整个fiber树实际上是一个链表树，既有链接属性，又有树的结构。得益于这样的特性，使得React在遍历整棵fiber树时可以知道从哪里开始，哪里停止，又在哪里继续，这就是fiber树可以中断和恢复的前提条件。其中的`memoizedProps`、`pendingProps` 和 `memoizedState` 字段让React知道组件的上一个状态和即将应用的状态。通过比较这些值，React可以决定组件是否需要更新，从而避免不必要的渲染，提高性能。`flags` 和 `subtreeFlags` 字段标识Fiber及其子树中需要执行的副作用，例如DOM更新、生命周期方法调用等。React会积累这些副作用，然后在Commit阶段一次性执行，从而提高效率。
 
 除此之外，React还实现了**双缓冲机制**。简单来讲，React在更新时会根据现有的fiber树（current tree）创建一个新的fiber树(workInProgress)，这个新的fiber树保存在内存中，在后台更新，current tree就是当前渲染在界面上的视图，它是RootFiber这个节点的子树。 当workInProgress tree完成更新后，RootFiber就指向了workInProgress tree, 此时workInProgress tree就成为了current tree， 它被渲染到界面上，而旧的current tree则变成了workInProgress tree。正是由于React同时维护着两棵fiber树，所以可以随时进行比较、中断和恢复，也使得React拥有优秀的渲染性能。
 
@@ -136,13 +136,13 @@ function FiberNode(
 
 两个阶段，调和(Reconciliation)阶段和提交(Commit)阶段。
 
-调和阶段 —— 确定哪些部分的UI需要更新，通过在构建WorkInProgress Tree的过程中比较新旧Props和旧fiber树来确定。这个阶段同样需要遍历fiber树，它为什么比老版本的递归遍历要高效和快速呢？得益于fiber node中flags 或 subtreeFlags字段，它们是16进制的标识，通过按位或运算后可以记录当前fiber节点和子树的副作用类型，当当前fiber节点和子树的副作用都为null时则不用继续递归，直接复用节点和子树。
+调和阶段 —— 确定哪些部分的UI需要更新，通过在构建WorkInProgress Tree的过程中比较新旧Props和旧fiber树来确定。这个阶段同样需要遍历fiber树，它为什么比老版本的递归遍历要高效和快速呢？得益于fiber node中`flags` 或 `subtreeFlags`字段，它们是16进制的标识，通过按**位或运算**后可以记录当前fiber节点和子树的副作用类型，在当前fiber节点和子树的副作用都为null时则不用继续递归，直接复用节点和子树。
 
 提交阶段 —— 更新DOM并执行任何副作用，通过遍历调和阶段创建的副作用列表实现。当进入提交阶段后，React无法进行中断。
 
 ## 5.setState的原理和机制？它为什么是异步的？
 
-React18中setState默认是**异步/批量**的，18版本以前在原生DOM事件回调中和setTimeout/promise回调中setState是同步执行的，可以在执行setState后立即拿到最新值，而在React合成事件和生命周期中是异步执行的。
+React18中setState默认是**异步/批量**的，18版本以前在原生DOM事件回调中和setTimeout/promise回调中setState是同步执行的，即可以在执行setState后立即拿到最新值，而在React合成事件和生命周期中是异步执行的。
 
 异步：setState后面代码无法在setState后立即拿到最新的state，它表现得像异步执行，**实际上不是传统意义上的异步执行（setTimeout/Promise）**。
 
@@ -188,7 +188,7 @@ function batchedUpdates<A, R>(fn: (a: A) => R, a: A): R {
 
 ## 7.useRef的原理和机制？为什么它不会导致UI重新渲染？/为什么它的值在组件的生命周期中是不变的？
 
-`useRef`函数接受一个初始值initialValue，并返回一个可变的ref对象，这个对象上面存在一个属性current,默认值就是initialValue。和`useState`不同的是，`useState`返回的是不可变的值，每一次render都是新值，而ref对象在组件的生命周期中不会改变，其current属性可以被赋任意值，也就是说无论何时访问ref对象都能获取到最新值。
+`useRef`函数接受一个初始值initialValue，并返回一个可变的ref对象，这个对象上面存在一个属性current，默认值就是initialValue。和`useState`不同的是，`useState`返回的是不可变的值，每一次render都是新值，而ref对象在组件的生命周期中不会改变，其current属性可以被赋任意值，也就是说无论何时访问ref对象都能获取到最新值。
 
 当初始化`useRef`时实际是调用内部的`mountRef`方法，流程如下：
 

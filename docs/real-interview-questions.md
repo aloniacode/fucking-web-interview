@@ -34,7 +34,7 @@ module.exports = {
 
 由于setState在React组件的生命周期和合成事件中是异步更新的（代码同步执行）的，它无法对当前快照的变量进行修改,在下一次更新前setState中永远都是旧的值用于计算；而如果传入的是回调函数，在连续多次调用它们时React会将这些setState放入一个队列中批量处理，在下一次更新前按照顺序执行队列中的回调函数，前一个回调的结果作为新的状态被下一个回调接收，直到队列执行完毕得到最终的新值。
 
-### 4.useeffect的setup函数返回的cleanup函数什么时候执行？
+### 4.useEffect的setup函数返回的cleanup函数什么时候执行？
 
 - 依赖数组中的值发生改变，会先使用旧的props和state执行一次cleanup，再使用新的props和state执行setup函数。
 - 组件卸载的时候最后执行一次
@@ -59,8 +59,10 @@ React的Diff策略：三个层次，同级比较。
 React只会比较新旧DOM树的同级节点，在Tree层次的比较时，不进行移动操作，如果相同位置的节点发生变化只进行删除和新增操作。（相比于创建和删除，移动操作有更大的性能损耗）。在组件层次比较时，会尽可能复用节点，例如某个节点发生改变但是它的子树没有变化，那么只需要更新发生改变的节点而子树复用。在元素层次比较时（例如列表），依赖于唯一标识Key来进行移动/删除操作,采用右移策略。
 
 ### 8.zustand的原理？为什么在组件A修改了store中的state，组件B的UI也会更新？
- zustand = 发布订阅 + useSyncExternalStore
- zustand内部通过发布订阅模式来实现状态改变的通知，通过是使用useSyncExternalStore来让React可以订阅到zustand的内部状态并在状态改变时改变视图。
+
+ zustand = 发布订阅 + `useSyncExternalStore` 。
+
+ zustand内部通过发布订阅模式来实现状态改变的通知，通过是使用`useSyncExternalStore`来让React可以订阅到zustand的内部状态并在状态改变时改变视图。
 
 ### 9.next.js创建的是多页应用还是单页？SSR有实践吗？怎么理解SSR？
 
@@ -114,7 +116,7 @@ React 17 :
 
 相较于16版本，17更多的是对16的优化。
 
-- 移除事件池机制。16中事件处理函数是异步执行的，这会导致它内部获取不到事件对象，为了避免事件对象被回收，需要使用event.persist()来获取它，而17中事件处理函数是同步执行的，可以直接使用事件对象。
+- 移除事件池机制。16中事件处理函数是异步执行的，这会导致它内部获取不到事件对象，为了避免事件对象被回收，需要使用`event.persist()`来获取它，而17中事件处理函数是同步执行的，可以直接使用事件对象。
 - 更改了事件委托的根节点。所有的事件都绑定再root element上，而16中都绑定再html元素上，避免多个react应用嵌套可能造成的冲突。
 - 新增JSX转换器，可以在不引入React的情况下使用JSX语法。
 - 副作用的清理时机。 17之前的useEffect的cleanup函数是同步执行的，这可能会减缓屏幕的过渡（例如切换标签），17中的cleanup函数是异步执行的，组件卸载后，cleanup会在屏幕更新后执行。另外，react17中会在任何新的副作用执行之前执行所有的cleanup函数（针对所有组件），而16中这种顺序只在组件内部得以保证。
@@ -125,7 +127,7 @@ React 18 :
 
 相较于17版本，18引入了并发模式、自动批处理、更多的hooks、SSR的支持。
 
-- 新增Concurrent Mode （并发模式）并默认开启，让渲染更加流畅。在16.8之前，state改变后经过一系列的处理进入diff过程。diff采用了DFS来遍历虚拟DOM树，这个过程是一次性完成的，而当应用很复杂元素很多时，diff过程就会长时间占用主线程。如果diff比较的时间超过16.6ms就会出现掉帧，如果时间更长则会造成卡顿。而在并发模式下，diff是可以中断的。如果diff时间超过5ms，React就会将主线程交还给浏览器去渲染，当空闲的时候，利用事件循环机制恢复diff。并发模式下的中断和恢复机制是scheduleri提供的。
+- 新增Concurrent Mode （并发模式）并默认开启，让渲染更加流畅。在16.8之前，state改变后经过一系列的处理进入diff过程。diff采用了DFS来遍历虚拟DOM树，这个过程是一次性完成的，而当应用很复杂元素很多时，diff过程就会长时间占用主线程。如果diff比较的时间超过16.6ms就会出现掉帧，如果时间更长则会造成卡顿。而在并发模式下，diff是可以中断的。如果diff时间超过5ms，React就会将主线程交还给浏览器去渲染，当空闲的时候，利用事件循环机制恢复diff。并发模式下的中断和恢复机制是scheduler提供的。
 
 ```jsx
 // v17
@@ -256,7 +258,7 @@ NodeJS中的事件循环：划分为六个阶段，也就是有六个宏任务�
 
 1. 压缩代码：使用html-webpack-plugin压缩html;使用 optimize-css-assets-webpack-plugin或者css-minimizer-webpack-plugin（v5）压缩css；使用terser-webpack-plugin压缩js；使用image-webpack-loader压缩图片。
 2. 代码分割。
-3. Tree shaking.打包时在确保不影响功能的前提下删除没有使用的代码；
+3. Tree shaking。打包时在确保不影响功能的前提下删除没有使用的代码。
 4. GZIP。使用compression-webpack-plugin对静态资源进行gzip压缩。
 5. 作用域提升。生产环境下默认开启。
 
