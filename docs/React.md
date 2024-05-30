@@ -263,4 +263,61 @@ React自己实现了一套事件系统，它的事件是合成事件，主要的
 
 React中需要在列表元素或动态生成元素上使用key属性用作元素的唯一标识，让每一个元素具有唯一性，在DIFF过程中通过比较新旧元素，如果有key相同的新旧节点时，则会执行移动操作，而不会执行先删除旧节点再创建新节点的操作，并且通过唯一key值可以在DIFF过程中快速定位对应元素，从而减少DIFF算法的时间复杂度，这些都大大提高了React的性能和效率。
 
+## 10.为什么建议传递给setState的参数是一个callback而不是一个对象/值？
+
+主要原因是`setState`是异步执行且批量更新的，建议传入callback而不是对象的理由如下：
+
+1. 确保获取最新值。通过传递一个回调函数作为参数，可以确保在当前更新状态时获取到上次更新后的最新状态值。回调函数的参数是前一个状态值，可以基于该值进行计算和更新。这样可以避免依赖于旧状态值但无法获取最新值的问题。
+
+```js
+
+const [users,setUsers] = useState([])
+
+setState(prev => [...prev,'user1']) // prev is []
+
+setState(prev => [...prev,'user2']) // prev is ['user1']
+
+```
+
+2. 避免状态更新问题。在对相同状态进行多次更新时，`setState`会在内部将这些更新合并为一个，这就是批处理。如果多次调用`setState`时传入对象，后续的调用可能会出现覆盖前面的调用，从而导致状态更新不符合预期。
+
+```js
+const [count,setCount] = useState(0)
+
+// 在某个场景中我需要连续增加count
+
+function operation() {
+  setCount(count + 1) // 1
+  setCount(count + 1)  // 1
+}
+
+function operation2() {
+  setCount(prev => prev + 1) // 1
+  setCount(prev => prev + 1) // 2
+}
+```
+对于以上代码，`operation`中两次调用的`setState`是直接传入值进行更新，react对于这种多次对相同状态更新的操作进行了合并，导致实际上`count`只增加了一次，而`operation2`中使用callback的方式进行更新，react会将这个callback放入更新队列中依次执行更新，最后得出计算结果，因此`count`实际上被增加了两次。
+
+## 11.简述下flux思想？
+
+Flux 是一种应用程序架构思想，旨在帮助管理复杂的前端应用程序中的数据流。它最初由 Facebook 提出，用于解决 React 应用中数据流管理的问题。以下是 Flux 思想的简要概述：
+
+- 单向数据流：Flux 架构中的核心概念是单向数据流。数据在应用中的流动是单向的，沿着固定的路径流动，这样可以更容易追踪数据的变化和管理数据流。
+
+- 组件化：Flux 鼓励将应用程序拆分为多个独立的组件，每个组件负责特定的功能。这种组件化的设计使得代码更易于维护和扩展。
+
+- Action：在 Flux 中，用户操作或事件会触发一个 Action，表示发生了某种行为。Action 是一个简单的对象，描述了事件的类型和相关数据。
+
+- Dispatcher：Dispatcher 是 Flux 架构中的中心枢纽，负责接收所有的 Action，并将它们分发给注册的 Store。
+
+- Store：Store 是应用中存储数据的地方，它负责管理应用的状态和数据。当 Store 接收到 Action 后，会根据 Action 的类型更新自己的状态，并触发视图更新。
+
+- View：View 层负责渲染用户界面，并根据 Store 的状态更新界面。View 从 Store 中获取数据，并监听 Store 的变化以及时更新界面。
+
+- 流程：用户操作会触发 Action，Dispatcher 将 Action 分发给 Store，Store 更新状态后通知 View 更新界面，这样形成了一个单向数据流的循环。
+
+![flux](/flux_core.png)
+
+通过这种单向数据流的架构，Flux 提供了一种清晰的数据管理方式，使得应用程序中的数据流动更加可控和可预测。尽管 Flux 本身并不是一个具体的库或框架，但它提供了一种思想和架构模式，可以帮助开发者更好地组织和管理复杂的前端应用程序。
+
 

@@ -157,3 +157,55 @@ CSS选择器的优先级是根据选择器的特定性（specificity）来确定
 
 1. 可能会导致HTML中出现大量类名，使得HTML结构变得臃肿。
 2. 可能会牺牲一定的可读性，因为类名通常更加具有技术性，不太直观。
+
+## 10. 讲讲盒子模型？
+
+当对一个文档进行布局（layout）的时候，浏览器的渲染引擎会根据标准之一的 CSS 基础框盒模型（CSS basic box model），将所有元素表示为一个个矩形的盒子（box）,一个盒子由四个部分组成：content、padding、border、margin。
+
+- 标准盒子模型（W3C）: 
+
+盒子总宽度 = width + padding + border + margin
+
+盒子总高度 = height + padding + border + margin
+
+即： **width/height**是实际内容的宽高。
+
+```css
+.box {
+  box-sizing: content-box;
+  width: 100px;
+  height: 100px;
+  border: 10px solid red;
+  padding: 10px;
+  margin: 10px;
+}
+```
+
+`.box`这个盒子的实际在界面中是一个宽160,高160的正方形。
+
+- IE怪异盒子模型：
+
+盒子总宽度 = width + margin
+
+盒子总高度 = height + margin
+
+即： **width/height**包含了padding和border。
+
+```css
+.box {
+  box-sizing: border-box;
+  width: 100px;
+  height: 100px;
+  border: 10px solid red;
+  padding: 10px;
+  margin: 10px;
+}
+```
+
+`.box`这个盒子的实际在界面中是一个宽120,高120的正方形。
+
+浏览器一般**默认盒子为标准盒子模型**，可以通过设置`box-sizing`来切换。
+
+```css
+box-sizing: content-box|border-box|inherit
+```
