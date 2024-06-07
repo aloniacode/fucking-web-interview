@@ -19,6 +19,8 @@ export default defineConfig({
       { text: "工程化", link: "/工程化" },
       { text: "计算机网络", link: "/计算机网络" },
       { text: "浏览器", link: "/浏览器相关" },
+      { text: "数据结构和算法", link: "/数据结构和算法" },
+      { text: "设计模式", link: "/设计模式" },
       { text: "面经", link: "/real-interview-questions" },
     ],
     socialLinks: [
