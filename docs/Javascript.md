@@ -502,3 +502,27 @@ promise.then(result => {
 
 > 因此， Set可以通过使用forEach、for...of、转为数组后遍历三种方式进行遍历。
 
+## 17. Proxy和Object.defineProperty的区别是什么？
+
+
+> MDN: Proxy 对象用于创建一个对象的代理，从而实现基本操作的拦截和自定义（如属性查找、赋值、枚举、函数调用等）。
+
+我们在对对象进行操作时实际上调用的都是对象内部的方法，也就是对象的基本操作。例如：
+
+```js
+const obj = {}
+
+obj.name // [[GET]]
+
+obj.name = "foo" // [[SET]]
+
+Object.setPrototypeOf(obj,{age: 10}) // [[SetPrototypeOf]]
+
+for (const key in obj) {} // [[OwnPropertyKeys]]
+
+```
+而在众多的基本操作中就包含了`[[DefineOwnProperty]]`基本操作，因此`Proxy`和`Object.defineProperty`的本质区别在于`Proxy`是用于拦截或自定义对象的基本操作，`Object.defineProperty`只是对象的一个基本操作。
+
+**Note**: 由于`Object.defineProperty`功能性远不如`Proxy`，这也导致了Vue2中使用`Object.defineProperty`对一些操作的监听拦截是无效的，例如往数组中push元素（Vue2通过自定义数组的原型来解决）。
+
+
