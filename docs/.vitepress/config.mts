@@ -32,6 +32,9 @@ export default defineConfig({
     footer: {
       copyright: "Copyright © 2024 Chenbin Li",
     },
+    search: {
+      provider: 'local'
+    }
   },
   lastUpdated: true,
   vite: {
