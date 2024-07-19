@@ -39,4 +39,7 @@ export default defineConfig({
       open: true,
     },
   },
+  sitemap: {
+    hostname: "https://fuck-interview.vercel.app/",
+  },
 });
