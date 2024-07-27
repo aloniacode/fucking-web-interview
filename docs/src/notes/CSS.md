@@ -1,16 +1,16 @@
 # CSS
 
-## 1.CSS3引入了哪些主要的特性？
+## CSS3引入了哪些主要的特性？
 
-1. 新的选择器：属性选择器，伪类选择器。
-2. box-shadow、border-radius、border-image
-3. background-clip
-4. transition
-5. transform
-6. animation
-7. linear-gradient
+- 新的选择器：属性选择器，伪类选择器。
+- box-shadow、border-radius、border-image
+- background-clip
+- transition
+- transform
+- animation
+- linear-gradient
 
-## 2.解释下物理像素、逻辑像素、像素密度的区别？为什么移动端开发中需要@2x,@3x等图片？
+## 解释下物理像素、逻辑像素、像素密度的区别？为什么移动端开发中需要@2x,@3x等图片？
 
 **物理像素**： 显示器屏幕实际上是由N个小方块构成，每个小方块只能显示一种颜色，而不同设备的屏幕它的小方块大小是不同的，这种小方块就是一个物理像素点。它不是固定的大小。
 
@@ -18,7 +18,9 @@
 
 **像素密度**： 表示在特定区域内物理像素的数量，通常用“ppi”（每英寸像素数）或“dpi”（每英寸点数）来表示。高像素密度意味着在相同物理尺寸的屏幕上显示更多的像素，因此图像和文本更加清晰。
 
-> 像素比（DPR）= 物理像素/逻辑像素
+::: tip
+像素比（DPR）= 物理像素/逻辑像素
+:::
 
 在移动端开发中，由于不同设备具有不同的像素密度，为了确保图片在不同设备上都能够以高清晰度显示，需要提供多个版本的图片。通常会提供1倍、2倍甚至3倍像素密度的图片。
 
@@ -27,7 +29,7 @@
 
 通过使用多倍像素密度的图片，可以确保在不同分辨率和像素密度的设备上都能够呈现出高质量的图像和UI元素，提升用户体验。
 
-## 3.CSS中如何画出粗细为0.5px的线？
+## CSS中如何画出粗细为0.5px的线？
 
 在常规的屏幕和打印场景中，CSS中是无法直接使用0.5像素粗细的线的，因为通常情况下屏幕无法显示半个像素，而打印时的分辨率也很难表达出0.5像素的线条。但是可以通过transform来模拟看起来0.5px的线,这个方法在某些情况下可以产生视觉上的效果，实际上仍然是使用整数像素来显示。
 
@@ -49,7 +51,7 @@
 }
 ```
 
-## 4.什么是1px问题？如何在前端开发中解决它？
+## 什么是1px问题？如何在前端开发中解决它？
 
 1px问题是指在一些移动端设备上页面的1px会变得很粗，呈现不止1px的效果。
 
@@ -66,30 +68,32 @@
 
 ```
 
-## 5.什么是块级作用域上下文(BFC)?如何创建它？
+## 什么是块级作用域上下文(BFC)?如何创建它？
 
-> MDN: 区块格式化上下文（Block Formatting Context，BFC）是 Web 页面的可视 CSS 渲染的一部分，是块级盒子的布局过程发生的区域，也是浮动元素与其他元素交互的区域。
+::: details MDN
+区块格式化上下文（Block Formatting Context，BFC）是 Web 页面的可视 CSS 渲染的一部分，是块级盒子的布局过程发生的区域，也是浮动元素与其他元素交互的区域。
+:::
 
 BFC是一种特殊的上下文环境。当一个元素创建BFC后，就具备了一个完全独立的环境。BFC会影响当前元素和内部元素的布局表现，但不会影响跟外部元素之间的布局关系。
 
 创建BFC的方式：
 
 1. 文档的根元素（html）。
-2. 浮动元素（即 float 值不为 none 的元素）。
-3. 绝对定位元素（position 值为 absolute 或 fixed 的元素）。
-4. 行内块元素（display 值为 inline-block 的元素）。
-5. 表格单元格（display 值为 table-cell，HTML 表格单元格默认值）。
-6. 表格标题（display 值为 table-caption，HTML 表格标题默认值）。
-7. 匿名表格单元格元素（display 值为 table（HTML 表格默认值）、table-row（表格行默认值）、table-row-group（表格体默认值）、table-header-group（表格头部默认值）、table-footer-group（表格尾部默认值）或 inline-table）。
-8. overflow 值不为 visible 或 clip 的块级元素。
-9. display 值为 flow-root 的元素。
-10. contain 值为 layout、content 或 paint 的元素。
-11. 弹性元素（display值为flex或inline-flex 元素的直接子元素），如果它们本身既不是弹性、网格也不是表格容器。
-12. 网格元素（display值为grid或inline-grid 元素的直接子元素），如果它们本身既不是弹性、网格也不是表格容器。
-13. 多列容器（column-count或column-width值不为 auto，且含有 column-count: 1 的元素）。
-14. column-span 值为 all 的元素始终会创建一个新的格式化上下文，即使该元素没有包裹在一个多列容器中。
+2. 浮动元素（即 float 值不为 `none` 的元素）。
+3. 绝对定位元素（position 值为 `absolute` 或 `fixed` 的元素）。
+4. 行内块元素（display 值为 `inline-block` 的元素）。
+5. 表格单元格（display 值为 `table-cell`，HTML 表格单元格默认值）。
+6. 表格标题（display 值为 `table-caption`，HTML 表格标题默认值）。
+7. 匿名表格单元格元素（display 值为 `table`（HTML 表格默认值）、`table-row`（表格行默认值）、`table-row-group`（表格体默认值）、`table-header-group`（表格头部默认值）、`table-footer-group`（表格尾部默认值）或 `inline-table`）。
+8. overflow 值不为 `visible` 或 `clip` 的块级元素。
+9. display 值为 `flow-root` 的元素。
+10. contain 值为 `layout`、`content` 或 `paint` 的元素。
+11. 弹性元素（display值为`flex`或`inline-flex` 元素的直接子元素），如果它们本身既不是弹性、网格也不是表格容器。
+12. 网格元素（display值为`grid`或`inline-grid` 元素的直接子元素），如果它们本身既不是弹性、网格也不是表格容器。
+13. 多列容器（column-count或column-width值不为 `auto`，且含有 `column-count: 1` 的元素）。
+14. column-span 值为` all` 的元素始终会创建一个新的格式化上下文，即使该元素没有包裹在一个多列容器中。
 
-## 6.开发中BFC的应用场景？
+## 开发中BFC的应用场景？
 
 常见的BFC应用场景： 清除浮动影响，防止外边距折叠。
 
@@ -109,7 +113,7 @@ BFC是一种特殊的上下文环境。当一个元素创建BFC后，就具备�
 
 如果不创建BFC，那么div1和div2之间的边距就是20px，而我们正常需要的是30px，通过给父元素设置`overflow:auto`可以达到预期效果。
 
-## 7.CSS选择器的优先级是怎么样的？
+## CSS选择器的优先级是怎么样的？
 
 CSS选择器的优先级是根据选择器的特定性（specificity）来确定的，通常用一个四位数表示，其中每个部分的权重从高到低排列依次是：千位数表示内联样式（Inline styles），百位数表示ID选择器，十位数表示类选择器、属性选择器或伪类，个位数表示元素选择器或伪元素。
 
@@ -124,7 +128,7 @@ CSS选择器的优先级是根据选择器的特定性（specificity）来确定
 
 如果有多个选择器应用到同一个元素上，CSS会根据这些选择器的特定性来确定最终生效的样式。通常情况下，选择器的特定性越高，其样式优先级越高，越有可能覆盖其他选择器的样式。
 
-## 8.@import和link标签都是加载CSS的，它们有什么区别？
+## @import和link标签都是加载CSS的，它们有什么区别？
 
 1. 加载CSS方式差异。@import是CSS方式，link是HTML的方式。
 1. 兼容性差异。@import是CSS2.1才有的语法，某些浏览器可能不兼容，而link标签不存在兼容性问题。
@@ -133,7 +137,7 @@ CSS选择器的优先级是根据选择器的特定性（specificity）来确定
 
 总结： link优于@import
 
-## 9.原子化CSS和使用普通的CSS有什么区别？它有哪些优势和缺点？
+## 原子化CSS和使用普通的CSS有什么区别？它有哪些优势和缺点？
 
 **原子化CSS**：
 
@@ -158,7 +162,7 @@ CSS选择器的优先级是根据选择器的特定性（specificity）来确定
 1. 可能会导致HTML中出现大量类名，使得HTML结构变得臃肿。
 2. 可能会牺牲一定的可读性，因为类名通常更加具有技术性，不太直观。
 
-## 10. 讲讲盒子模型？
+## 讲讲盒子模型？
 
 当对一个文档进行布局（layout）的时候，浏览器的渲染引擎会根据标准之一的 CSS 基础框盒模型（CSS basic box model），将所有元素表示为一个个矩形的盒子（box）,一个盒子由四个部分组成：content、padding、border、margin。
 

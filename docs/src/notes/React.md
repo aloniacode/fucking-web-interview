@@ -1,12 +1,12 @@
 # React
 
-## 1.React合成事件和原生事件的区别？
+## React合成事件和原生事件的区别？
 
-1. 名称不同：原生事件名称都是小写，合成事件的名称是驼峰式的。
-2. 使用方式不同：原生直接使用字符串绑定，合成事件使用大括号绑定。
-3. 阻止浏览器默认行为： 原生的事件函数返回false ，合成事件使用preventDefault()。
-4. 事件对象不同，React合成事件的事件对象可以通过nativeEvent属性访问原生事件对象。
-4. React合成事件没有像原生事件一样直接绑定到对应的DOM上，而是利用事件委托和事件冒泡统一注册在顶层（document/root element）。
+- 名称不同：原生事件名称都是小写，合成事件的名称是驼峰式的。
+- 使用方式不同：原生直接使用字符串绑定，合成事件使用大括号绑定。
+- 阻止浏览器默认行为： 原生的事件函数返回false ，合成事件使用preventDefault()。
+- 事件对象不同，React合成事件的事件对象可以通过nativeEvent属性访问原生事件对象。
+- React合成事件没有像原生事件一样直接绑定到对应的DOM上，而是利用事件委托和事件冒泡统一注册在顶层（document/root element）。
 
 那为什么React要使用合成事件？
 
@@ -16,13 +16,13 @@
 4. 优化，利用事件委托都将事件代理到document/root element，减少内存开销。
 5. 干预事件的分发，依托fiber架构可以干预事件的分发来提升用户体验。
 
-## 2.为什么使用hooks？
+## 为什么使用Hooks?/Hook的作用时什么？
 
 1. 复杂组件的逻辑便于抽离。
 2. 复用逻辑。
 3. class组件的this不易理解，给使用者造成额外的心智负担。
 
-## 3.useEffect 和 useLayoutEffect 的区别 以及使用场景
+## useEffect 和 useLayoutEffect 的区别 以及使用场景
 
 ```js
 
@@ -62,7 +62,7 @@ VDOM更新 -> `useLayoutEffect` -> DOM更新
 3. 模拟生命周期方法。使用`useLayoutEffect`可以模拟 `componentDidMount`、`componentDidUpdate`和`componentWillUnmount`的同步行为。
 
 
-## 4.Fiber架构的原理和工作模式？
+## Fiber架构的原理和工作模式？
 
 React执行流程：JSX -> `React.createElement()` -> Fiber Node -> DOM render 
 
@@ -140,7 +140,7 @@ function FiberNode(
 
 提交阶段 —— 更新DOM并执行任何副作用，通过遍历调和阶段创建的副作用列表实现。当进入提交阶段后，React无法进行中断。
 
-## 5.setState的原理和机制？它为什么是异步的？
+## setState的原理和机制？它为什么是异步的？
 
 React18中setState默认是**异步/批量**的，18版本以前在原生DOM事件回调中和setTimeout/promise回调中setState是同步执行的，即可以在执行setState后立即拿到最新值，而在React合成事件和生命周期中是异步执行的。
 
@@ -161,7 +161,7 @@ React18中setState默认是**异步/批量**的，18版本以前在原生DOM事�
 1. 提升性能，避免每次调用`setState`都重新渲染组件。（性能损耗一般在虚拟DOM树diff过程）
 2. 避免`state`和`props`无法同步。如果`setState`是同步执行的，那么就会立即更新组件内部的`state`，但是render函数中传递的`props`还是旧值，这就导致了`state`和`props`的不一致。
 
-## 6.setState批量更新是如何实现的？
+## setState批量更新是如何实现的？
 
 React 中的 `setState` 批量更新是通过 `enqueueSetState` 函数实现的。当在组件中多次调用`setState`时，React并不会立即更新组件的状态，而是将状态更新请求添加到一个队列中，然后在合适的时机批量处理这些更新请求。
 
@@ -186,7 +186,7 @@ function batchedUpdates<A, R>(fn: (a: A) => R, a: A): R {
 
 这种批量更新的机制可以确保在一个更新周期内，只进行一次更新操作，从而避免不必要的重复渲染。这对于性能优化至关重要，特别是在处理大量状态更新时。
 
-## 7.useRef的原理和机制？为什么它不会导致UI重新渲染？/为什么它的值在组件的生命周期中是不变的？
+## useRef的原理和机制？为什么它不会导致UI重新渲染？/为什么它的值在组件的生命周期中是不变的？
 
 `useRef`函数接受一个初始值initialValue，并返回一个可变的ref对象，这个对象上面存在一个属性current，默认值就是initialValue。和`useState`不同的是，`useState`返回的是不可变的值，每一次render都是新值，而ref对象在组件的生命周期中不会改变，其current属性可以被赋任意值，也就是说无论何时访问ref对象都能获取到最新值。
 
@@ -220,7 +220,7 @@ function updateRef<T>(initialValue: T): {|current: T|} {
 
 通过上面原理可以知道，组件更新时引用的对象永远是同一个ref对象， 而不会重新创建新的ref对象。这是因为hook对象都是存储在组件的fiber对象上，这确保了ref对象不可变，这样在组件的生命周期内ref对象的current值永远都是被赋值的最新值，除了手动修改current值之外它是不会改变的。
 
-## 8.React事件处理机制是怎么样的？16和17版本又有什么不同？
+## React事件处理机制是怎么样的？16和17版本又有什么不同？
 
 React自己实现了一套事件系统，它的事件是合成事件，主要的目的是抹平不同浏览器之间的兼容性差异。
 
@@ -254,16 +254,18 @@ React自己实现了一套事件系统，它的事件是合成事件，主要的
 5. 批量执行合成事件（events）内的回调函数。
 6. 如果没有使用**stopImmediatePropagation**方法阻止冒泡，会将继续进行 DOM 事件流的冒泡（从 document 到 window），否则结束事件触发。
 
-> 注意： 阻止冒泡如果使用stopPropagation方法时，当document/root element上还有同类型的其他事件时也会被触发执行，但是window上不会被执行。
+::: tip
+注意： 阻止冒泡如果使用stopPropagation方法时，当document/root element上还有同类型的其他事件时也会被触发执行，但是window上不会被执行。
+:::
 
 由此可知，由于React的事件委托机制，React组件对应的DOM节点上的原生事件触发时机总是在React组件内注册的合成事件之前。
 
 
-## 9.React为什么在处理列表时推荐使用唯一的key属性？这与DIFF算法有什么关系？
+## React为什么在处理列表时推荐使用唯一的key属性？这与DIFF算法有什么关系？
 
 React中需要在列表元素或动态生成元素上使用key属性用作元素的唯一标识，让每一个元素具有唯一性，在DIFF过程中通过比较新旧元素，如果有key相同的新旧节点时，则会执行移动操作，而不会执行先删除旧节点再创建新节点的操作，并且通过唯一key值可以在DIFF过程中快速定位对应元素，从而减少DIFF算法的时间复杂度，这些都大大提高了React的性能和效率。
 
-## 10.为什么建议传递给setState的参数是一个callback而不是一个对象/值？
+## 为什么建议传递给setState的参数是一个callback而不是一个对象/值？
 
 主要原因是`setState`是异步执行且批量更新的，建议传入callback而不是对象的理由如下：
 
@@ -298,7 +300,7 @@ function operation2() {
 ```
 对于以上代码，`operation`中两次调用的`setState`是直接传入值进行更新，react对于这种多次对相同状态更新的操作进行了合并，导致实际上`count`只增加了一次，而`operation2`中使用callback的方式进行更新，react会将这个callback放入更新队列中依次执行更新，最后得出计算结果，因此`count`实际上被增加了两次。
 
-## 11.简述下flux思想？
+## 简述下flux思想？
 
 Flux 是一种应用程序架构思想，旨在帮助管理复杂的前端应用程序中的数据流。它最初由 Facebook 提出，用于解决 React 应用中数据流管理的问题。以下是 Flux 思想的简要概述：
 

@@ -1,6 +1,6 @@
 # TypeScript
 
-## 1.TypeScript的数据类型有哪些？
+## TypeScript的数据类型有哪些？
 
 - boolean
 
