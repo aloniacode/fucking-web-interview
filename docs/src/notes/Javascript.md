@@ -1,4 +1,4 @@
-# JavaScript Questions
+# JavaScript
 
 ## 1.有几种数据类型？
 

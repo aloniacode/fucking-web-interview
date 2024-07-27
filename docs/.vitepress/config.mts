@@ -10,19 +10,49 @@ export default defineConfig({
     logo: "/favicon.png",
     nav: [
       { text: "", link: "/" },
-      { text: "HTML", link: "/HTML" },
-      { text: "CSS", link: "/CSS" },
-      { text: "JavaScript", link: "/Javascript" },
-      { text: "TypeScript", link: "/Typescript" },
-      { text: "React", link: "/React" },
-      { text: "Vue", link: "/Vue" },
-      { text: "工程化", link: "/工程化" },
-      { text: "计算机网络", link: "/计算机网络" },
-      { text: "浏览器", link: "/浏览器相关" },
-      { text: "数据结构和算法", link: "/数据结构和算法" },
-      { text: "设计模式", link: "/设计模式" },
-      { text: "面经", link: "/real-interview-questions" },
+      { text: "笔记", link: "/notes/" },
+      { text: "面经", link: "/interviews/" },
     ],
+    sidebar: {
+      "/notes/": [
+        {
+          text: "Basic",
+          items: [
+            { text: "HTML", link: "/notes/HTML" },
+            { text: "CSS", link: "/notes/CSS" },
+            { text: "JavaScript", link: "/notes/Javascript" },
+            { text: "TypeScript", link: "/notes/Typescript" },
+            { text: "NodeJS", link: "/notes/NodeJS" },
+            { text: "React", link: "/notes/React" },
+            { text: "Vue", link: "/notes/Vue" },
+            { text: "工程化", link: "/notes/工程化" },
+            { text: "计算机网络", link: "/notes/计算机网络" },
+            { text: "浏览器", link: "/notes/浏览器相关" },
+            { text: "Git", link: "/notes/Git" },
+          ],
+        },
+        {
+          text: "Advanced",
+          items: [
+            { text: "数据结构和算法", link: "/notes/数据结构和算法" },
+            { text: "设计模式", link: "/notes/设计模式" },
+            {
+              text: "场景技巧",
+              link: "/notes/场景技巧",
+            },
+          ],
+        },
+      ],
+      "/interviews/": [
+        {
+          text: "2024",
+          items: [
+            { text: "2024.3.22", link: "/interviews/2024.3.22" },
+            { text: "2024.3.29", link: "/interviews/2024.3.29" },
+          ],
+        },
+      ],
+    },
     socialLinks: [
       {
         icon: "github",
@@ -33,13 +63,14 @@ export default defineConfig({
       copyright: "Copyright © 2024 Chenbin Li",
     },
     search: {
-      provider: 'local'
-    }
+      provider: "local",
+    },
   },
+  srcDir: "src",
   lastUpdated: true,
   vite: {
     server: {
-      open: true,
+      open: false,
     },
   },
   sitemap: {

@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /HTML
+      link: /notes/
 
 features:
   - title: 学习 Learning

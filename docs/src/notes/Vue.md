@@ -1,4 +1,4 @@
-# Vue Questions
+# Vue
 
 ## 1.说说Vue的响应式原理，它和React有什么区别？
 
@@ -203,7 +203,7 @@ async function increment() {
 
 **双端diff**:
 
-![vue_diff](/vue_diff.png)
+![vue_diff](../assets/vue_diff.png)
 
 第一轮遍历：对于新旧节点分别设置四个指针：`startIndex`指向未处理的第一个节点,`endIndex`指向未处理的最后一个节点。每一次遍历都会进行最多四次的比较，也就是新旧的`startIndex`和`endIndex`两两比较:
 

@@ -1,4 +1,4 @@
-# HTML Questions
+# HTML
 
 ## 1.什么是SEO?它为什么对网站至关重要？
 

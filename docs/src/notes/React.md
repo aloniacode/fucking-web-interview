@@ -1,4 +1,4 @@
-# React questions
+# React
 
 ## 1.React合成事件和原生事件的区别？
 
@@ -129,7 +129,7 @@ function FiberNode(
 除此之外，React还实现了**双缓冲机制**。简单来讲，React在更新时会根据现有的fiber树（current tree）创建一个新的fiber树(workInProgress)，这个新的fiber树保存在内存中，在后台更新，current tree就是当前渲染在界面上的视图，它是RootFiber这个节点的子树。 当workInProgress tree完成更新后，RootFiber就指向了workInProgress tree, 此时workInProgress tree就成为了current tree， 它被渲染到界面上，而旧的current tree则变成了workInProgress tree。正是由于React同时维护着两棵fiber树，所以可以随时进行比较、中断和恢复，也使得React拥有优秀的渲染性能。
 
 
-![fiber_tree_double_cache](/fiber_tree_double_cache.png)
+![fiber_tree_double_cache](../assets/fiber_tree_double_cache.png)
 
 
 **Fiber的工作流程**
@@ -148,7 +148,7 @@ React18中setState默认是**异步/批量**的，18版本以前在原生DOM事�
 
 批量：连续多次调用setState会合并成一个更新操作，UI只会重新渲染一次。
 
-![自动批处理](/react18_automatic_batching.png)
+![自动批处理](../assets/react18_automatic_batching.png)
 
 原理：
 
@@ -316,7 +316,7 @@ Flux 是一种应用程序架构思想，旨在帮助管理复杂的前端应用
 
 - 流程：用户操作会触发 Action，Dispatcher 将 Action 分发给 Store，Store 更新状态后通知 View 更新界面，这样形成了一个单向数据流的循环。
 
-![flux](/flux_core.png)
+![flux](../assets/flux_core.png)
 
 通过这种单向数据流的架构，Flux 提供了一种清晰的数据管理方式，使得应用程序中的数据流动更加可控和可预测。尽管 Flux 本身并不是一个具体的库或框架，但它提供了一种思想和架构模式，可以帮助开发者更好地组织和管理复杂的前端应用程序。
 
