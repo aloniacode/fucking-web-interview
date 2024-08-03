@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>子元素高度固定的虚拟列表</title>
+  </head>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .visible-block {
+      height: 600px;
+      width: 50%;
+      border: 1px solid #ccc;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+    li {
+      height: 50px;
+      border-bottom: 1px solid #ccc;
+    }
+  </style>
+  <body>
+    <div class="visible-block">
+      <ul class="container"></ul>
+    </div>
+
+    <script>
+      function renderItem(index, height) {
+        const item = document.createElement("li");
+        item.innerHTML = `Item ${index}`;
+        item.dataset.index = index;
+        item.style.height = `${height}px`;
+        return item;
+      }
+
+      // 节流函数
+      function throttled(fn, delay = 500) {
+        let timer = null;
+        return function (...args) {
+          if (!timer) {
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = null;
+            }, delay);
+          }
+        };
+      }
+      const data = Array.from({ length: 1000 }, (_, i) => i);
+      const totalItems = data.length;
+      const itemHeight = 50;
+      const bufferCount = 5; // 缓冲区大小
+
+      const visibleBlock = document.querySelector(".visible-block");
+      const container = document.querySelector(".container");
+
+      const visibleItems = Math.floor(visibleBlock.clientHeight / itemHeight);
+
+      let startIndex = 0,
+        endIndex = startIndex + visibleItems;
+
+      function init() {
+        const fragment = document.createDocumentFragment();
+
+        // 计算实际渲染的起始和结束索引，加上缓冲区大小
+        const bufferedStartIndex = Math.max(0, startIndex - bufferCount);
+        const bufferedEndIndex = Math.min(
+          startIndex + visibleItems + bufferCount,
+          totalItems
+        );
+
+        data.slice(bufferedStartIndex, bufferedEndIndex).forEach((item) => {
+          const ele = renderItem(item, itemHeight);
+          fragment.appendChild(ele);
+        });
+
+        container.style.height = `${
+          itemHeight * totalItems - bufferedStartIndex * itemHeight
+        }px`;
+        container.appendChild(fragment);
+      }
+
+      function scrollHandler(e) {
+        startIndex = Math.floor(e.target.scrollTop / itemHeight);
+        endIndex = startIndex + visibleItems;
+
+        // 计算实际渲染的起始和结束索引，加上缓冲区大小
+        const bufferedStartIndex = Math.max(0, startIndex - bufferCount);
+        const bufferedEndIndex = Math.min(
+          startIndex + visibleItems + bufferCount,
+          totalItems
+        );
+
+        // 移除所有现有的子元素
+        while (container.firstChild) {
+          container.removeChild(container.firstChild);
+        }
+        const fragment = document.createDocumentFragment();
+        data
+          .slice(bufferedStartIndex, bufferedEndIndex)
+          .forEach((item, index) => {
+            const ele = renderItem(item, itemHeight);
+            fragment.appendChild(ele);
+          });
+        container.appendChild(fragment);
+        container.style.marginTop = `${itemHeight * bufferedStartIndex}px`;
+        container.style.height = `${
+          (totalItems - bufferedStartIndex) * itemHeight
+        }px`;
+      }
+      visibleBlock.addEventListener("scroll", throttled(scrollHandler));
+
+      init();
+    </script>
+  </body>
+</html>
