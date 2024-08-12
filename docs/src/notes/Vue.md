@@ -129,7 +129,7 @@ Vue 的生命周期主要分为 8 个阶段：创建前后，更新前后，销�
 
 3. 使用 `ref` 获取子组件的实例，从而在父组件中获取子组件的数据。
 
-4. EventBus： 适用于兄弟组件之间传值。具体为创建一个中央事件总线，兄弟组件通过`$emit`触发自定义事件，其他兄弟组件通过`$on`监听自定义事件。
+4. EventBus： 适用于兄弟组件之间传值。具体为创建一个中央事件总线，兄弟组件通过`$emit`触发自定义事件，其他兄弟组件通过`$on`监听自定义事件。**Vue3 中不推荐使用该方式**。
 
 ```js
 class EventBus {
@@ -153,7 +153,7 @@ Vue.prototype.$eventBus = new EventBus(); // 将$eventBus挂载到vue实例的�
 Vue.prototype.$eventBus = new Vue(); // Vue已经实现了Bus的功能
 ```
 
-5. `$parent` 或 `$root`: 通过共同祖辈$parent或者$root 搭建通信桥连
+5. 通过共同祖辈`$parent`或者`$root`搭建通信桥连,Vue3 中使用`getCurrentInstance()`获取当前组件实例，然后通过其`parent`或者`root`属性获取对应的父组件或祖先组件实例。**Vue3 中不推荐使用该方式**。
 
 ```js
 // 兄弟组件
@@ -168,20 +168,60 @@ this.$parent.emit("add");
 
 7. `Provide` 与 `Inject` （依赖注入）：祖先/顶层组件通过定义`provide(key,value)`来为子孙组件提供数据，子孙组件通过`inject(key,defaultValue)`来获取。
 
-```jsx
-// 祖先组件
+```vue
 <script setup>
-  import {(ref, provide)} from 'vue' const count = ref(0) provide(/* 注入名 */
-  'count', /* 值 */ count)
+// 祖先组件提供数据
+import { ref, provide } from "vue";
+const count = ref(0);
+provide(/* 注入名 */ "count", /* 值 */ count);
 </script>
 ```
 
-```jsx
-// 子孙组件
-<script setup>import {inject} from 'vue' const count = inject('count')</script>
+```vue
+<script setup>
+// 子孙组件中消费
+import { inject } from "vue";
+const count = inject("count");
+</script>
 ```
 
-8. Vuex/Pinia: 适用于需要跨组件或页面共享状态的场景。
+8. Vuex/Pinia: 适用于需要跨多个复杂关系组件传递数据或页面共享状态等场景。
+
+```js
+// stores/counter.js
+import { defineStore } from "pinia";
+
+export const useCounterStore = defineStore("counter", {
+  state: () => {
+    return { count: 0 };
+  },
+  // 也可以这样定义
+  // state: () => ({ count: 0 })
+  actions: {
+    increment() {
+      this.count++;
+    },
+  },
+});
+```
+
+```vue
+<script setup>
+// 组件中使用
+import { useCounterStore } from "@/stores/counter";
+
+const counter = useCounterStore();
+
+counter.count++;
+counter.$patch({ count: counter.count + 1 });
+// 或使用 action 代替
+//counter.increment()
+</script>
+<template>
+  <!-- 直接从 store 中访问 state -->
+  <div>Current Count: {{ counter.count }}</div>
+</template>
+```
 
 ## Vue 中数据的双向绑定是如何实现的？原理是什么？
 
@@ -201,10 +241,9 @@ this.$parent.emit("add");
 
 ![Vue响应式更新原理](../assets/vue_responsive_update.png)
 
-
 总的来说，Vue 数据双向绑定的核心是通过`Watcher`实现数据与视图的同步。当数据变化时，通过`Watcher`检测到并通知相关视图更新；当用户与视图交互时，通过`Watcher`更新相关的数据。这样就实现了数据和视图的双向绑定。
 
-## Vue 中`$nextTick`/`nextTick` 的原理是什么？它有哪些用途？
+## Vue 中`$nextTick`/`nextTick` 的原理是什么？它有什么作用？
 
 `$nextTick`存在的原因： Vue 采用的是**异步更新策略**，当监听到数据发生变化后不会立即更新 DOM，而是开启一个任务队列，将同一事件循环中的数据变更加入队列中，等循环结束后在下一轮事件循环中遍历队列一次性更新。这个机制基于浏览器的事件循环，这样做的好处在于可以将多次的数据更新合并到一次，减少操作 DOM 的次数，提高性能。
 
@@ -218,11 +257,11 @@ this.$parent.emit("add");
 
 1. 使用 callbacks 数组存放需要在下一个事件循环中执行的回调函数，并使用 pending 标志标识当前是否已经向队列中添加了任务，如果添加了则置为 true，当任务被执行时设置为 false。
 
-2. 如果`nextTick`没有传入回调函数并且当前环境支持 Promise 就会的返回一个 Promise，该 Promise 的 then 中可以获取到最新的 DOM。
+2. 如果`nextTick`没有传入回调函数并且当前环境支持 Promise 就会的返回一个 Promise，该 Promise 的 `then`回调中可以获取到最新的 DOM。
 
-3. 使用`flushCallbacks`方法用于执行`callbacks`数组中的回调，它首先会将 pending 设置为 false 并拷贝`callbacks`后清空`callbacks`（用于处理`nextTick中嵌套`nextTick`的情况）,然后会遍历拷贝`callbacks`数组并依次执行回调。
+3. 使用`flushCallbacks`方法用于执行`callbacks`数组中的回调，它首先会将 pending 设置为 false 并拷贝`callbacks`后清空`callbacks`（用于处理`nextTick`中嵌套`nextTick`的情况）,然后会遍历拷贝`callbacks`数组并依次执行回调。
 
-应用场景：如果数据变化后需要立即使用到最新的 DOM，就在 nextTick 的回调中处理，亦或者不传入回调并使用`await`等待`nextTick`，这样后续的代码就能获取到最新的 DOM。
+应用场景：如果数据变化后需要立即使用到最新的 DOM，就在`nextTick` 的回调中处理，亦或者不传入回调并使用`await`等待`nextTick`，这样后续的代码就能获取到最新的 DOM。
 
 ```vue
 <script setup>
@@ -337,6 +376,43 @@ Vue3 的快速 diff 算法在双端 diff 的基础上借鉴了字符串 diff 时
 
 需要绑定 key 的原因是确保在列表渲染时，每个元素都有一个唯一且稳定的标识符。如果不绑定 key，Vue 会使用元素的索引作为默认标识符，但这样可能会导致一些意外的问题，特别是在列表发生变化时。通过绑定 key，Vue 能够更准确地追踪每个元素的变化，确保列表的更新和渲染是准确的。如果`key`值重复也会导致渲染异常。
 
+## Vue2 中组件的 data 属性为什么必须是函数？
+
+组件的`data`属性必须是函数，是为了避免多个组件实例之间共享数据，避免数据污染。
+
+```js
+function Component() {}
+
+Component.prototype.data = {
+  count: 0,
+};
+
+const componentA = new Component();
+const componentB = new Component();
+
+console.log(componentB.data.count); // 0
+componentA.data.count = 1;
+console.log(componentB.data.foo); // 1
+```
+
+上面代码中两个实例访问的都是同一个`data`对象，因此会出现其中一个组件修改数据影响到另一个组件。正确的组件设计思路是数据状态互不影响，而这种单例模式对于组件实例化是不适用的，解决办法很简单，就是每个组件的`data`都独立，也就是使用函数返回一个新对象，确保每个组件实例互不影响。
+
+```js
+function Component() {
+  this.data = this.data();
+}
+
+Component.prototype.data = function () {
+  return {
+    count: 0,
+  };
+};
+```
+
+::: tip
+根组件的`data`属性可以是一个对象或函数，因为根组件只有一个实例，所以不存在数据污染的问题。
+:::
+
 ## 为什么不建议在 Vue 中使用 index 作为 key？
 
 ::: details Vue 官方文档
@@ -348,6 +424,22 @@ Vue 默认按照“就地更新”的策略来更新通过 v-for 渲染的元素
 其实如果是静态列表（无增删移动操作），完全可以使用 index 作为`key`,例如分页场景下，每页显示 10 条数据，每个元素使用 index 作为`key`而不是数据项中的唯一标识（例如 id），当切换页码的时候无需替换当前页面的列表项，只需要更新相应的数据就行。
 
 当然，在非静态列表的场景中还是尽可能避免使用 index 作为`key`,当数据更新或 DOM 出现新增删除或移动时可能会导致 index 发生变化，从而导致 Vue 认为某些节点发生变化而重现渲染，甚至会出现意外的 BUG。index 作为`key`不能保证唯一性和稳定性，故而不建议使用。
+
+## Mixin 和组合式函数的区别？
+
+相同点： 它们都是 Vue 中用来进行逻辑复用的方式。
+
+不同点：
+
+1. `mixin`本质是一个对象，可以包含选项式 API 中的`data`,`methods`,`computed`,`created`,`components`等等，然后在其他组件中的`mixins`选项中使用，这就能将`mixin`对象中的定义和逻辑混入到该组件中。而**组合式函数**是一个利用 Vue 的组合式 API 来封装和复用有状态逻辑的函数。
+
+2. 相比于组合式函数，`mixin`有三个主要的短板：**不清晰的数据来源**，**命名空间冲突**，**隐式地跨 minxin 交流**。
+
+综上，Vue3 不推荐使用`mixin`，而是推荐使用组合式函数。
+
+::: tip
+`mixin`有全局混入和局部混入，当组件和`mixin`对象都使用相同选项时会进行递归合并，此时组件的选项优先级高于`minxin`的选项，会将其覆盖。但如果是生命周期选项或`watch`相同时则会合并为一个数据，`mixin`的优先级更高。
+:::
 
 ## 说说 Pinia 的工作原理？他如何管理和维护状态？
 
