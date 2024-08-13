@@ -103,6 +103,10 @@ Vue 的生命周期主要分为 8 个阶段：创建前后，更新前后，销�
 
 6. diff 算法不同： Vue2 中的 DIFF 算法会遍历每一个虚拟 DOM 并进行新旧 DOM 对比，并返回一个`patch`对象来记录两个节点的不同，然后用`patch`信息去更新 DOM（边记录边更新）。这样的处理方式会比较每一个节点，对于没有发生更新的节点的比较是多余的，这就照成了不必要的性能浪费。Vue3 中改进了 diff 算法，在初始化时会给每一个节点添加`patchFlags`标识，在 diff 过程中只会比较`patchFlags`发生变化的节点，而`patchFlags`没有变化的节点做**静态标记**，渲染时直接复用节点。
 
+7. Vue3弃用了`filters`,内联模板，实例方法`$on`、`$off` 和 `$once`。
+
+具体变化请查阅文档: [Vue3 非兼容性改变](https://v3-migration.vuejs.org/zh/breaking-changes/)。
+
 ## Vue3 做了哪些优化？
 
 1. 更好的 TypeScript 支持： Vue3 全面采用 TypeScript 重写，提供了更好的类型推断和类型提示，也提供了更多的内置类型声明，使得开发时更容易发现代码错误和调试。
@@ -249,7 +253,7 @@ counter.$patch({ count: counter.count + 1 });
 
 **原理**：将传入的回调函数包装成异步任务（分为微任务和宏任务），为了尽快执行所以默认优先包装成微任务，然后加入异步队列（微任务队列），等在下一次事件循环时调用。
 
-::: tip
+::: tip 注意
 `$nextTick`提供了 Promise.then、MutationObserver、setImmediate、setTimeout(fn,0)四种方法用于处理传入的回调函数，优先级从左到右依次降低，如果当前环境不支持某个方法就降级处理。
 :::
 
@@ -290,11 +294,11 @@ async function increment() {
 
 和 React diff 类似，Vue diff 算法也遵循以下三个原则：
 
-- 同级比较
+- 同级比较。
 
-- 新旧节点类型不同时直接删除再创建
+- 新旧节点类型不同时直接删除再创建。
 
-- 用 key 作为新老节点的标识符
+- 用 `key` 作为新老节点的标识符。
 
 同级比较分为以下两种情况：
 
@@ -318,7 +322,7 @@ async function increment() {
 
 如果其中一种匹配成功则移动相应的指针，指针**由两边向中间移动**。
 
-::: tip
+::: tip 注意
 Vue 在 diff 过程中进行节点的更新、创建、删除和移动。
 :::
 
@@ -409,7 +413,7 @@ Component.prototype.data = function () {
 };
 ```
 
-::: tip
+::: tip 注意
 根组件的`data`属性可以是一个对象或函数，因为根组件只有一个实例，所以不存在数据污染的问题。
 :::
 
@@ -437,9 +441,124 @@ Vue 默认按照“就地更新”的策略来更新通过 v-for 渲染的元素
 
 综上，Vue3 不推荐使用`mixin`，而是推荐使用组合式函数。
 
-::: tip
+::: tip 注意
 `mixin`有全局混入和局部混入，当组件和`mixin`对象都使用相同选项时会进行递归合并，此时组件的选项优先级高于`minxin`的选项，会将其覆盖。但如果是生命周期选项或`watch`相同时则会合并为一个数据，`mixin`的优先级更高。
 :::
+
+## 说说自定义指令？应用场景有哪些？
+
+Vue 中除了一些内置得指令（例如： `v-on`,`v-bind`,`v-model`等）还允许用户自定义指令。我们知道，Vue 中重用代码的方式可以通过组件和组合式函数，组件是主要的构建模块，组合式函数侧重于有状态的逻辑。自定义指令是另一种复用形式，它主要是为了重用涉及**普通元素的底层 DOM**访问的逻辑。
+
+一个自定义指令是由一个包含类似组件生命周期钩子的对象来定义，指令绑定的元素将作为钩子函数的第一个参数。
+
+注册方式：
+
+1. 在`<script setup>`中，任何以`v`开头的**驼峰式**命名的变量都被视作为一个自定义指令。
+
+```vue
+<script setup>
+// 在模板中启用 v-focus
+const vFocus = {
+  mounted: (el) => el.focus(),
+};
+</script>
+
+<template>
+  <input v-focus />
+</template>
+```
+
+2. 在非`<script setup>`中，需要在`directive`选项中注册自定义指令。
+
+```js
+export default {
+  setup() {
+    /*...*/
+  },
+  directives: {
+    // 在模板中启用 v-focus
+    focus: {
+      /* ... */
+    },
+  },
+};
+```
+
+3. 全局注册时，使用 vue 实例的`directive`方法注册。
+
+```js
+const app = createApp({});
+
+// 使 v-focus 在所有组件中都可用
+app.directive("focus", {
+  /* ... */
+});
+```
+
+自定义指令对象的钩子函数可以是如下所示,其中：
+
+- `el`：指令绑定的元素。可以直接操作 DOM。
+
+- `binding`：一个对象，包含以下属性：
+
+  - `value`：传递给指令的值，例如：在`v-my-directive="1 + 1"`中，`value`为`2`。
+
+  - `oldValue`：指令绑定的元素上一次更新时的绑定值。无论是否更改，它都可用。
+
+  - `arg`：传递给指令的参数（如果有的话），例如：在`v-my-directive:arg="value"`中，参数为`arg`。可以是动态的。
+
+  - `modifiers`：一个包含修饰符的对象（如果有的话），例如：在`v-my-directive.a.b`中，`modifiers`为`{ a: true, b: true }`。
+
+  - `instance`： 使用该指令的组件实例。
+
+  - `dir`： 指令的定义对象。
+
+- `vnode`：代表绑定元素的底层 VNode。
+
+- `preVnode`: 代表之前的渲染中指令所绑定元素的 VNode。
+
+```js
+const myDirective = {
+  // 在绑定元素的 attribute 前
+  // 或事件监听器应用前调用
+  created(el, binding, vnode) {
+    // 下面会介绍各个参数的细节
+  },
+  // 在元素被插入到 DOM 前调用
+  beforeMount(el, binding, vnode) {},
+  // 在绑定元素的父组件
+  // 及他自己的所有子节点都挂载完成后调用
+  mounted(el, binding, vnode) {},
+  // 绑定元素的父组件更新前调用
+  beforeUpdate(el, binding, vnode, prevVnode) {},
+  // 在绑定元素的父组件
+  // 及他自己的所有子节点都更新后调用
+  updated(el, binding, vnode, prevVnode) {},
+  // 绑定元素的父组件卸载前调用
+  beforeUnmount(el, binding, vnode) {},
+  // 绑定元素的父组件卸载后调用
+  unmounted(el, binding, vnode) {},
+};
+```
+
+::: tip 注意
+除了`el`之外的参数都是只读的，不要修改它们。
+:::
+
+::: warning 不推荐
+不推荐在组件上使用自定义指令，因为当组件存在多个根节点时可能无法正常工作。
+:::
+
+应用场景（一般需要对DOM直接进行访问和操作的场景都可以使用）：
+
+- 表单验证：可以自定义指令来实现表单验证，例如：`v-validate-email`、`v-validate-phone`等。
+
+- 拖拽。
+
+- 图片懒加载。
+
+- 一键复制。
+
 
 ## 说说 Pinia 的工作原理？他如何管理和维护状态？
 
