@@ -61,6 +61,14 @@ Vue 的生命周期主要分为 8 个阶段：创建前后，更新前后，销�
 |          deactivated          | keep-alive 缓存的组件被失活  |                                                                                                       |
 |         errorCaptured         | 捕获到组件渲染过程报错时调用 |                               用于处理异常，例如错误上报，收集异常等等                                |
 
+::: tip 注意
+`onActivated`在组件挂载时也会调用，并且 `onDeactivated` 在组件卸载时也会调用。
+
+顺序： `onMounted` -> `onActivated` ，`onUnmounted` -> `onDeactivated`。
+
+这两个钩子不仅适用于 `<KeepAlive>` 缓存的根组件，也适用于缓存树中的后代组件。
+:::
+
 **生命周期流程示意图**如下：
 
 ![生命周期流程示意图](../assets/vue_lifecycle.png)
@@ -95,7 +103,7 @@ Vue 的生命周期主要分为 8 个阶段：创建前后，更新前后，销�
 
 - 被激活：`onActivated` 被包含在`<keep-alive>`中的组件，会多出两个生命周期钩子函数。被激活时执行。
 
-- 切换：`onDeactivated` 比如从 A 组件，切换到 B 组件，A 组件消失时执行
+- 切换：`onDeactivated` 比如从 A 组件，切换到 B 组件，A 组件消失时执行。
 
 4. `v-if` 和 `v-for` 的优先级: Vue2 中 `v-for` 优先级高于 `v-if`,两者可以一起使用，但是会带来性能上地浪费；Vue3 中 `v-if` 优先级高于 `v-for`，一起使用会报错。
 
@@ -103,9 +111,9 @@ Vue 的生命周期主要分为 8 个阶段：创建前后，更新前后，销�
 
 6. diff 算法不同： Vue2 中的 DIFF 算法会遍历每一个虚拟 DOM 并进行新旧 DOM 对比，并返回一个`patch`对象来记录两个节点的不同，然后用`patch`信息去更新 DOM（边记录边更新）。这样的处理方式会比较每一个节点，对于没有发生更新的节点的比较是多余的，这就照成了不必要的性能浪费。Vue3 中改进了 diff 算法，在初始化时会给每一个节点添加`patchFlags`标识，在 diff 过程中只会比较`patchFlags`发生变化的节点，而`patchFlags`没有变化的节点做**静态标记**，渲染时直接复用节点。
 
-7. Vue3 弃用了`filters`,内联模板，实例方法`$on`、`$off` 和 `$once`。
+7. Vue3 弃用了`filters`，内联模板，实例方法`$on`，`$off` 和 `$once`。
 
-具体变化请查阅文档: [Vue3 非兼容性改变](https://v3-migration.vuejs.org/zh/breaking-changes/)。
+具体变化请查阅文档: [Vue3 非兼容性改变](https://v3-migration.vuejs.org/zh/breaking-changes/)
 
 ## Vue3 做了哪些优化？
 
