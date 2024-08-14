@@ -103,7 +103,7 @@ Vue 的生命周期主要分为 8 个阶段：创建前后，更新前后，销�
 
 6. diff 算法不同： Vue2 中的 DIFF 算法会遍历每一个虚拟 DOM 并进行新旧 DOM 对比，并返回一个`patch`对象来记录两个节点的不同，然后用`patch`信息去更新 DOM（边记录边更新）。这样的处理方式会比较每一个节点，对于没有发生更新的节点的比较是多余的，这就照成了不必要的性能浪费。Vue3 中改进了 diff 算法，在初始化时会给每一个节点添加`patchFlags`标识，在 diff 过程中只会比较`patchFlags`发生变化的节点，而`patchFlags`没有变化的节点做**静态标记**，渲染时直接复用节点。
 
-7. Vue3弃用了`filters`,内联模板，实例方法`$on`、`$off` 和 `$once`。
+7. Vue3 弃用了`filters`,内联模板，实例方法`$on`、`$off` 和 `$once`。
 
 具体变化请查阅文档: [Vue3 非兼容性改变](https://v3-migration.vuejs.org/zh/breaking-changes/)。
 
@@ -549,7 +549,7 @@ const myDirective = {
 不推荐在组件上使用自定义指令，因为当组件存在多个根节点时可能无法正常工作。
 :::
 
-应用场景（一般需要对DOM直接进行访问和操作的场景都可以使用）：
+应用场景（一般需要对 DOM 直接进行访问和操作的场景都可以使用）：
 
 - 表单验证：可以自定义指令来实现表单验证，例如：`v-validate-email`、`v-validate-phone`等。
 
@@ -559,6 +559,77 @@ const myDirective = {
 
 - 一键复制。
 
+## Vue 中如何处理错误？
+
+Vue 项目中的异常错误一般可以分为网络接口错误和代码逻辑错误。
+
+1. 网络接口错误：又可以分为请求错误和响应错误，以`axios`为例，可以使用拦截器对请求和响应做错误处理。
+
+```js
+// 添加请求拦截器
+axios.interceptors.request.use(
+  function (config) {
+    // 在发送请求之前做些什么
+    return config;
+  },
+  function (error) {
+    // 对请求错误做些什么
+    return Promise.reject(error);
+  }
+);
+// 添加响应拦截器
+axios.interceptors.response.use(
+  function (response) {
+    // 2xx 范围内的状态码都会触发该函数。
+    // 对响应数据做点什么
+    return response;
+  },
+  function (error) {
+    // 超出 2xx 范围的状态码都会触发该函数。
+    // 对响应错误做点什么
+    return Promise.reject(error);
+  }
+);
+```
+
+2. 对于代码逻辑的异常，可以通过全局的`app.config.errorHandler`或组件内`onErrorCaptured()`钩子函数来处理。
+
+```ts
+// errorHandler
+interface AppConfig {
+  errorHandler?: (
+    err: unknown,
+    instance: ComponentPublicInstance | null,
+    info: string
+  ) => void;
+}
+// onErrorCaptured
+function onErrorCaptured(callback: ErrorCapturedHook): void;
+
+type ErrorCapturedHook = (
+  err: unknown, // 错误对象
+  instance: ComponentPublicInstance | null, //发生错误的组件实例
+  info: string // 错误来源的说明信息字符串
+) => boolean | void;
+```
+
+`onErrorCaptured()`可以捕获后代组件传递的错误，来源如下：
+
+- 组件渲染
+
+- 事件处理器
+
+- 生命周期钩子
+
+- `setup`函数
+
+- 侦听器
+
+- 自定义指令钩子
+
+- 过渡钩子
+
+**错误传递规则**：默认情况下，所有的错误都会传递到`app.config.errorHandler`；如果组件树的继承链上存在多个`onErrorCaptured()`钩子，则会按照顺序调用,类似于事件冒泡，直到有一个钩子返回`false`，此时错误会停止向上传递；如果`onErrorCaptured()`本身抛出错误，则该错误和捕获的错误会被发送到`app.config.errorHandler`。
 
 ## 说说 Pinia 的工作原理？他如何管理和维护状态？
 
