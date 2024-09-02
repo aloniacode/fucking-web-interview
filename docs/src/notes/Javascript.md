@@ -6,7 +6,7 @@
 
 引用类型：Array , Object , Function , Date , RegExp 。
 
-> 实际上引用类型只有Object，Array,Function,Date,RegExp都是特殊的对象
+> 实际上引用类型只有 Object，Array,Function,Date,RegExp 都是特殊的对象
 
 ## 什么是变量提升？它导致了哪些问题？
 
@@ -18,7 +18,7 @@
 
 简而言之，变量提升（Hosting）是指变量和函数的声明会在它们被执行前“提升”到当前作用域的顶部，这意味着可以在声明之前访问这些变量和函数。
 
-**为什么会有变量提升**？ 原因是js执行一段代码需要先编译，编译的过程中会生成对应的执行上下文，变量和函数的声明会保存到其中的变量对象中，代码执行的时候会从当前执行上下文的变量对象逐层往上（词法作用域规则）寻找变量和函数，直到全局执行上下文。
+**为什么会有变量提升**？ 原因是 js 执行一段代码需要先编译，编译的过程中会生成对应的执行上下文，变量和函数的声明会保存到其中的变量对象中，代码执行的时候会从当前执行上下文的变量对象逐层往上（词法作用域规则）寻找变量和函数，直到全局执行上下文。
 
 导致的问题：
 
@@ -28,38 +28,37 @@
 
 3. 维护困难。
 
-## var、let、const之间的区别？
+## var、let、const 之间的区别？
 
-1. var声明的变量存在变量提升，而let和const则没有。
+1. var 声明的变量存在变量提升，而 let 和 const 则没有。
 
-2. var声明的变量没有块级作用域，let和const声明的变量具有块级作用域。
+2. var 声明的变量没有块级作用域，let 和 const 声明的变量具有块级作用域。
 
-3. var和let用于声明变量，而const用于声明常量,声明后不可修改（如果是引用类型，地址不可修改，但内部可修改）。
+3. var 和 let 用于声明变量，而 const 用于声明常量,声明后不可修改（如果是引用类型，地址不可修改，但内部可修改）。
 
-4. var声明的变量可以重复声明，不会报错，而let和const则不行。
+4. var 声明的变量可以重复声明，不会报错，而 let 和 const 则不行。
 
-> 优先使用const，如果变量需要修改则使用let,尽量避免使用var
+> 优先使用 const，如果变量需要修改则使用 let,尽量避免使用 var
 
 ## 什么是作用域链？
 
-作用域链是在JavaScript中用于解析标识符（变量名、函数名等）的一种机制。在JavaScript中，每个函数都有自己的作用域，作用域链是由嵌套的作用域构成的链式结构，用于确定标识符的查找顺序。
+作用域链是在 JavaScript 中用于解析标识符（变量名、函数名等）的一种机制。在 JavaScript 中，每个函数都有自己的作用域，作用域链是由嵌套的作用域构成的链式结构，用于确定标识符的查找顺序。
 
-当代码在函数内部引用一个变量时，JavaScript引擎会首先在当前函数的作用域中查找该变量。如果找不到，它会沿着作用域链向上一级作用域查找，直到找到该变量或达到全局作用域。如果在全局作用域中仍然找不到，则会抛出 ReferenceError 错误。
+当代码在函数内部引用一个变量时，JavaScript 引擎会首先在当前函数的作用域中查找该变量。如果找不到，它会沿着作用域链向上一级作用域查找，直到找到该变量或达到全局作用域。如果在全局作用域中仍然找不到，则会抛出 ReferenceError 错误。
 
 作用域链的形成是由函数创建时确定的，它基于函数定义时所处的位置来决定。当函数被创建时，它会“记住”自己被创建时所处的作用域链，包括它所在的函数作用域和全局作用域。
 
-作用域链的机制保证了在JavaScript中变量的访问顺序，它使得内部函数可以访问外部函数的变量，但外部函数无法访问内部函数的变量。这种机制也是闭包（Closure）能够正常工作的基础之一。
+作用域链的机制保证了在 JavaScript 中变量的访问顺序，它使得内部函数可以访问外部函数的变量，但外部函数无法访问内部函数的变量。这种机制也是闭包（Closure）能够正常工作的基础之一。
 
-## 说一下原型以及原型链？为什么它们被设计在JavaScript中？
+## 说一下原型以及原型链？为什么它们被设计在 JavaScript 中？
 
-在JavaScript中，每个对象都有一个原型（prototype），原型是一个对象，包含可供其他对象继承的属性和方法。通过原型，对象可以共享属性和方法，实现属性和方法的复用，节省内存空间。
+在 JavaScript 中，每个对象都有一个原型（prototype），原型是一个对象，包含可供其他对象继承的属性和方法。通过原型，对象可以共享属性和方法，实现属性和方法的复用，节省内存空间。
 
 原型链是一种对象之间的关系链，通过原型链，对象可以访问其他对象的属性和方法。原型链实现了对象之间的继承关系，使得子对象可以继承父对象的属性和方法。
 
 它们被设计的主要原因就是**实现面向对象编程**。原型链允许动态地添加、修改原型对象的属性和方法，从而实现动态继承和多态性。
 
-
-## JS中如何实现继承？
+## JS 中如何实现继承？
 
 有六种方式实现继承，分别是原型链继承、构造函数继承、组合继承、原型式继承、寄生式继承、寄生组合式继承。如果按照实现方式划分，这种六种可以依据是否使用`Object.create`而分为两类。
 
@@ -69,11 +68,11 @@
 
 ```js
 function Parent() {
-    this.name = 'Parent';
+  this.name = "Parent";
 }
 
 function Child() {
-    this.age = 10;
+  this.age = 10;
 }
 
 Child.prototype = new Parent();
@@ -88,40 +87,41 @@ console.log(child.name); // 输出：Parent
 
 ```js
 function Parent(name) {
-    this.name = name;
+  this.name = name;
 }
 
 function Child(name, age) {
-    Parent.call(this, name);
-    this.age = age;
+  Parent.call(this, name);
+  this.age = age;
 }
 
-var child = new Child('Child', 10);
+var child = new Child("Child", 10);
 console.log(child.name); // 输出：Child
 ```
+
 3. 组合继承。
 
 优缺点：结合原型链继承和构造函数继承，但是父类多构造了一次，造成性能开销。
 
 ```js
 function Parent(name) {
-    this.name = name;
+  this.name = name;
 }
 
 function Child(name, age) {
-    Parent.call(this, name);
-    this.age = age;
+  Parent.call(this, name);
+  this.age = age;
 }
 
 Child.prototype = new Parent();
 
-var child = new Child('Child', 10);
+var child = new Child("Child", 10);
 console.log(child.name); // 输出：Child
 ```
 
 4. 原型式继承。
 
-主要是借助Object.create()，以一个现有对象作为原型，创建一个新对象。缺点很明显，`Object.create`是浅拷贝，多个实例的引用类型是共享的，存在副作用。
+主要是借助 Object.create()，以一个现有对象作为原型，创建一个新对象。缺点很明显，`Object.create`是浅拷贝，多个实例的引用类型是共享的，存在副作用。
 
 ```js
 const p = {
@@ -134,9 +134,10 @@ const p = {
 
 const c4 = Object.create(p);
 c4.name = "oliva";
-console.log(c4.age) // 25
+console.log(c4.age); // 25
 console.log(c4.getName()); // oliva
 ```
+
 5. 寄生式继承。
 
 在原型式的基础上进行增强，可以添加额外的方法，但依旧存在改变原型式继承的缺点。
@@ -194,7 +195,8 @@ Child6.prototype.getAge = function () {
 const c6 = new Child6();
 console.log(c6.play); // [1,2,3]
 ```
-> ES6中extends关键字的实现就是寄生组合式继承
+
+> ES6 中 extends 关键字的实现就是寄生组合式继承
 
 ## 防抖和节流的区别？如何实现？应用场景有哪些？
 
@@ -206,15 +208,15 @@ console.log(c6.play); // [1,2,3]
 
 ```js
 function debounce(func, wait) {
-    let timeout;
-    return function () {
-        let context = this; // 保存this指向
-        let args = arguments; // 拿到event对象
-        clearTimeout(timeout)
-        timeout = setTimeout(function(){
-            func.apply(context, args)
-        }, wait);
-    }
+  let timeout;
+  return function () {
+    let context = this; // 保存this指向
+    let args = arguments; // 拿到event对象
+    clearTimeout(timeout);
+    timeout = setTimeout(function () {
+      func.apply(context, args);
+    }, wait);
+  };
 }
 ```
 
@@ -222,25 +224,25 @@ function debounce(func, wait) {
 
 ```js
 function debounce(func, wait, immediate) {
-    let timeout;
-    return function () {
-        let context = this;
-        let args = arguments;
-        if (timeout) clearTimeout(timeout); // timeout 不为null
-        if (immediate) {
-            let callNow = !timeout; // 第一次会立即执行，以后只有事件执行后才会再次触发
-            timeout = setTimeout(function () {
-                timeout = null;
-            }, wait)
-            if (callNow) {
-                func.apply(context, args)
-            }
-        }else {
-            timeout = setTimeout(function () {
-                func.apply(context, args)
-            }, wait);
-        }
+  let timeout;
+  return function () {
+    let context = this;
+    let args = arguments;
+    if (timeout) clearTimeout(timeout); // timeout 不为null
+    if (immediate) {
+      let callNow = !timeout; // 第一次会立即执行，以后只有事件执行后才会再次触发
+      timeout = setTimeout(function () {
+        timeout = null;
+      }, wait);
+      if (callNow) {
+        func.apply(context, args);
+      }
+    } else {
+      timeout = setTimeout(function () {
+        func.apply(context, args);
+      }, wait);
     }
+  };
 }
 ```
 
@@ -248,31 +250,30 @@ function debounce(func, wait, immediate) {
 
 ```js
 function throttled(fn, delay = 500) {
-    let oldtime = Date.now()
-    return function (...args) {
-        let newtime = Date.now()
-        if (newtime - oldtime >= delay) {
-            fn.apply(null, args)
-            oldtime = Date.now()
-        }
+  let oldtime = Date.now();
+  return function (...args) {
+    let newtime = Date.now();
+    if (newtime - oldtime >= delay) {
+      fn.apply(null, args);
+      oldtime = Date.now();
     }
+  };
 }
-
 ```
 
-**节流函数-定时器写法**：delay毫秒后第一次执行，第二次事件停止触发后依然会再一次执行。
+**节流函数-定时器写法**：delay 毫秒后第一次执行，第二次事件停止触发后依然会再一次执行。
 
 ```js
 function throttled(fn, delay = 500) {
-    let timer = null
-    return function (...args) {
-        if (!timer) {
-            timer = setTimeout(() => {
-                fn.apply(this, args)
-                timer = null
-            }, delay);
-        }
+  let timer = null;
+  return function (...args) {
+    if (!timer) {
+      timer = setTimeout(() => {
+        fn.apply(this, args);
+        timer = null;
+      }, delay);
     }
+  };
 }
 ```
 
@@ -280,21 +281,21 @@ function throttled(fn, delay = 500) {
 
 ```js
 function throttled(fn, delay) {
-    let timer = null
-    let starttime = Date.now()
-    return function () {
-        let curTime = Date.now() // 当前时间
-        let remaining = delay - (curTime - starttime)  // 从上一次到现在，还剩下多少多余时间
-        let context = this
-        let args = arguments
-        clearTimeout(timer)
-        if (remaining <= 0) {
-            fn.apply(context, args)
-            starttime = Date.now()
-        } else {
-            timer = setTimeout(fn, remaining);
-        }
+  let timer = null;
+  let starttime = Date.now();
+  return function () {
+    let curTime = Date.now(); // 当前时间
+    let remaining = delay - (curTime - starttime); // 从上一次到现在，还剩下多少多余时间
+    let context = this;
+    let args = arguments;
+    clearTimeout(timer);
+    if (remaining <= 0) {
+      fn.apply(context, args);
+      starttime = Date.now();
+    } else {
+      timer = setTimeout(fn, remaining);
     }
+  };
 }
 ```
 
@@ -317,39 +318,43 @@ function throttled(fn, delay) {
 4. 解决循环中的作用域问题：在循环中使用闭包可以解决作用域问题，避免由于作用域链导致的变量共享问题。
 
 ```js
-const funcArr = []
+const funcArr = [];
 
-for(var i = 0; i < 3; i++){
+for (var i = 0; i < 3; i++) {
   funcArr[i] = function () {
     console.log(i);
   };
 }
-funcArr[0]() // 3
-funcArr[1]() // 3
-funcArr[2]() // 3
-
+funcArr[0](); // 3
+funcArr[1](); // 3
+funcArr[2](); // 3
 ```
-这里的i是全局变量，循环结束时i=3, 根据作用域链查找，每个函数打印的i都是上层作用域中的i，这不是我们预期的结果。
+
+这里的 i 是全局变量，循环结束时 i=3, 根据作用域链查找，每个函数打印的 i 都是上层作用域中的 i，这不是我们预期的结果。
 
 有两种方法解决：：
 
 ```js
 // 自执行函数+闭包
 
-const funcArr = []
+const funcArr = [];
 
-for(var i = 0; i < 3; i++){
-  (function(j){
-      setTimeout(funcArr[j] = function () {
+for (var i = 0; i < 3; i++) {
+  (function (j) {
+    setTimeout(
+      (funcArr[j] = function () {
         console.log(j);
-      }, 0)
-  })(i)
+      }),
+      0
+    );
+  })(i);
 }
-funcArr[0]() // 3
-funcArr[1]() // 3
-funcArr[2]() // 3
+funcArr[0](); // 3
+funcArr[1](); // 3
+funcArr[2](); // 3
 ```
-另一种是使用let替换var，let具有块级作用域，三个私有作用域互不干扰。
+
+另一种是使用 let 替换 var，let 具有块级作用域，三个私有作用域互不干扰。
 
 ## 如何解决“回调地狱”问题？
 
@@ -365,9 +370,9 @@ funcArr[2]() // 3
 
 5. 使用第三方库：一些第三方库如`RxJS`、`Async.js`等提供了更多的工具和方法来处理异步操作，可以帮助简化异步代码的书写。
 
-## 什么是Promise?它的作用是什么？
+## 什么是 Promise?它的作用是什么？
 
-Promise表示异步操作最终的完成（或失败）以及其结果值，它基于`Promise A+`规范实现，即一个`Promise`对象必须有`then`方法。
+Promise 表示异步操作最终的完成（或失败）以及其结果值，它基于`Promise A+`规范实现，即一个`Promise`对象必须有`then`方法。
 
 ::: details MDN
 一个 Promise 是一个代理，它代表一个在创建 promise 时不一定已知的值。它允许你将处理程序与异步操作的最终成功值或失败原因关联起来。这使得异步方法可以像同步方法一样返回值：异步方法不会立即返回最终值，而是返回一个 promise，以便在将来的某个时间点提供该值。
@@ -399,7 +404,7 @@ Promise表示异步操作最终的完成（或失败）以及其结果值，它�
 
 ## 什么是生成器（Generator）以及它在异步编程中如何被利用？
 
-生成器（Generator）是 ES6 中引入的一种特殊类型的函数，它可以在函数执行过程中暂停，并且可以在暂停的地方恢复执行。生成器通过使用 `function*`关键字来定义，内部使用 ` yield `关键字来暂停函数的执行并返回一个值。
+生成器（Generator）是 ES6 中引入的一种特殊类型的函数，它可以在函数执行过程中暂停，并且可以在暂停的地方恢复执行。生成器通过使用 `function*`关键字来定义，内部使用 `yield`关键字来暂停函数的执行并返回一个值。
 
 在异步编程中，生成器可以与`Promise`结合使用，以实现更灵活的异步操作。通过生成器函数和`yield`关键字，可以编写更清晰、易读的异步代码，避免回调地狱和复杂的`Promise`链式调用。
 
@@ -415,44 +420,42 @@ Promise表示异步操作最终的完成（或失败）以及其结果值，它�
 
 ```js
 function fetchData() {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve('Data fetched');
-        }, 2000);
-    });
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve("Data fetched");
+    }, 2000);
+  });
 }
 
 function* asyncOperation() {
-    try {
-        const data = yield fetchData();
-        console.log(data);
-    } catch (error) {
-        console.error(error);
-    }
+  try {
+    const data = yield fetchData();
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // 执行生成器函数
 const generator = asyncOperation();
 const promise = generator.next().value;
 
-promise.then(result => {
-    generator.next(result);
+promise.then((result) => {
+  generator.next(result);
 });
-
 ```
 
 在这个示例中，`asyncOperation`函数是一个生成器函数，通过`yield`关键字暂停函数执行，等待`Promise`返回结果。通过配合`Promise`，可以实现异步操作的控制流程。生成器在异步编程中提供了一种更清晰、更灵活的解决方案，使异步代码更易于编写和理解。
 
-## async/await关键字的作用是什么？它们和promise相比有什么优势和不同？
+## async/await 关键字的作用是什么？它们和 promise 相比有什么优势和不同？
 
 ::: details MDN
-async/await的目的在于简化使用基于 promise 的 API 时所需的语法。async/await 的行为就好像搭配使用了生成器和 promise。
+async/await 的目的在于简化使用基于 promise 的 API 时所需的语法。async/await 的行为就好像搭配使用了生成器和 promise。
 :::
 
 `async/await`是`ES2017`引入的异步编程语法，用于更简洁、易读地编写异步代码。它的作用是简化异步操作的处理，使代码看起来更像同步代码，提高代码的可读性和可维护性。
 
 `async`函数是用来定义一个返回`Promise`对象的异步函数，函数内部可以使用`await`关键字来暂停异步函数的执行，等待`Promise`对象的状态改变。当`await`后面的`Promise`对象状态变为`resolved`时，`await`表达式的值就是`Promise`的解决值，然后程序继续执行。
-
 
 相比于直接使用`Promise`，`async/await`有以下优势和不同之处：
 
@@ -474,8 +477,7 @@ async/await的目的在于简化使用基于 promise 的 API 时所需的语法�
 
 总的来说，`async/await`提供了更优雅、更直观的方式来处理异步操作，使代码更易读、易维护，并且在处理异步操作时更容易处理错误。
 
-## ES6中引入了解构赋值，它的本质/原理是什么？
-
+## ES6 中引入了解构赋值，它的本质/原理是什么？
 
 解构赋值是通过模式匹配的方式来进行赋值操作。当进行对象或数组的解构赋值时，JavaScript 引擎会根据解构的模式和待解构的对象或数组的结构进行匹配，然后将对应的值赋给指定的变量。
 
@@ -486,7 +488,6 @@ async/await的目的在于简化使用基于 promise 的 API 时所需的语法�
 对于任何可迭代对象（不一定是数组），它们之所以可以进行解构赋值，是因为 JavaScript 中的解构赋值机制是基于迭代器协议（Iterator Protocol）实现的。迭代器协议定义了一个`next()`方法，用于在对象上进行迭代，每次调用`next()`方法都会返回一个包含 value 和 done 属性的对象。value 表示当前迭代的值，done 表示迭代是否结束。
 
 当对一个可迭代对象进行解构赋值时，JavaScript 引擎会自动调用该对象的迭代器（即 `Symbol.iterator` 方法），然后根据迭代器返回的值进行解构赋值操作。这使得除了数组外，其他实现了迭代器协议的对象（比如 Set、Map、字符串等）也可以进行解构赋值。
-
 
 ## 深拷贝和浅拷贝的区别？
 
@@ -502,20 +503,19 @@ async/await的目的在于简化使用基于 promise 的 API 时所需的语法�
 
 3. 使用第三方库：一些第三方库如 Lodash 的 `_.cloneDeep()` 方法可以实现深拷贝，且处理了更多特殊情况，如循环引用、Symbol 类型等。
 
-4. 使用`structuredClone` API，它是Web API之一，无法处理特殊类型如函数、正则表达式等。它不是JavaScript语言本身的特性——相反，它是浏览器和任何其他实现了`window`这样全局对象的JavaScript运行时的一个特性。
+4. 使用`structuredClone` API，它是 Web API 之一，无法处理特殊类型如函数、正则表达式等。它不是 JavaScript 语言本身的特性——相反，它是浏览器和任何其他实现了`window`这样全局对象的 JavaScript 运行时的一个特性。
 
-## for...of和for...in的区别？
+## for...of 和 for...in 的区别？
 
-**for...in**：一般用于遍历对象的非Symbol**可枚举属性**以及**继承的可枚举属性**（来自原型链）,也就是说它会遍历原型。
+**for...in**：一般用于遍历对象的非 Symbol**可枚举属性**以及**继承的可枚举属性**（来自原型链）,也就是说它会遍历原型。
 
-**for...of**: 用于遍历**可迭代对象**，只要对象有`Symbol.iterator`属性并实现了相应的`Iterator`就能被遍历。例如内置的Array、Map、Set、String、TypedArray、函数的 arguments 对象、NodeList 对象等等。
+**for...of**: 用于遍历**可迭代对象**，只要对象有`Symbol.iterator`属性并实现了相应的`Iterator`就能被遍历。例如内置的 Array、Map、Set、String、TypedArray、函数的 arguments 对象、NodeList 对象等等。
 
-:::tip
-因此， Set可以通过使用forEach、for...of、转为数组后遍历三种方式进行遍历。
+::: tip 提示
+因此， Set 可以通过使用 forEach、for...of、转为数组后遍历三种方式进行遍历。
 :::
 
-
-## Proxy和Object.defineProperty的区别是什么？
+## Proxy 和 Object.defineProperty 的区别是什么？
 
 ::: details MDN
 Proxy 对象用于创建一个对象的代理，从而实现基本操作的拦截和自定义（如属性查找、赋值、枚举、函数调用等）。
@@ -524,22 +524,75 @@ Proxy 对象用于创建一个对象的代理，从而实现基本操作的拦�
 我们在对对象进行操作时实际上调用的都是对象内部的方法，也就是对象的基本操作。例如：
 
 ```js
-const obj = {}
+const obj = {};
 
-obj.name // [[GET]]
+obj.name; // [[GET]]
 
-obj.name = "foo" // [[SET]]
+obj.name = "foo"; // [[SET]]
 
-Object.setPrototypeOf(obj,{age: 10}) // [[SetPrototypeOf]]
+Object.setPrototypeOf(obj, { age: 10 }); // [[SetPrototypeOf]]
 
-for (const key in obj) {} // [[OwnPropertyKeys]]
-
+for (const key in obj) {
+} // [[OwnPropertyKeys]]
 ```
+
 而在众多的基本操作中就包含了`[[DefineOwnProperty]]`基本操作，因此`Proxy`和`Object.defineProperty`的本质区别在于`Proxy`是用于拦截或自定义对象的基本操作，`Object.defineProperty`只是对象的一个基本操作。
 
-::: tip
-由于`Object.defineProperty`功能性远不如`Proxy`，这也导致了Vue2中使用`Object.defineProperty`对一些操作的监听拦截是无效的，例如往数组中push元素（Vue2通过自定义数组的原型来解决）。
+::: tip 提示
+由于`Object.defineProperty`功能性远不如`Proxy`，这也导致了 Vue2 中使用`Object.defineProperty`对一些操作的监听拦截是无效的，例如往数组中 push 元素（Vue2 通过自定义数组的原型来解决）。
 :::
 
+## ES6 中`class`如何转换为`function`？
+
+1. 首先`class`是在严格模式下执行的。
+
+2. `class`必须通过`new`操作符进行实例化，而`function`无法使用`new`操作符。
+
+3. `class`中定义的方法无法通过`new`操作符实例化。
+
+例如，将下面的类转写为函数。
+
+```js
+class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+  sayHi() {
+    console.log(`Hi, my name is ${this.name} and I am ${this.age} years old.`);
+  }
+}
+```
+转写后：
+
+```js
+function Person(name, age) {
+  if (!new.target) {
+    throw new TypeError(
+      "Class constructor Person cannot be invoked without 'new'"
+    );
+  }
+  this.name = name;
+  this.age = age;
+}
+
+Object.defineProperty(Person.prototype, "sayHi", {
+  value: function () {
+    if (!new.target) {
+      throw new TypeError(
+        "Class constructor Person cannot be invoked without 'new'"
+      );
+    }
+    console.log(`Hi, my name is ${this.name} and I am ${this.age} years old.`);
+  },
+  enumerable: false,
+});
+```
+
+::: tip 提示
+
+如果直接在函数的原型上定义方法，会被`for...in`遍历到，而`class`中的方法是不可枚举的。
+
+:::
 
 
