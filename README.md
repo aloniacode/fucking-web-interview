@@ -1,33 +1,41 @@
 # Fuck Interview
 
-> Welcome PR 
+这个仓库用于记录我过去在面试和工作学习中遇到的问题和答案，其中也包括一些代码片段和图片，以及drawio源文件。
 
-## Features
+**对于其中出现的错误，欢迎提交issues或者PR！**
 
-- HTML
+## Content
 
-- CSS
+- [HTML](./docs/src/notes/HTML.md)
 
-- JavaScript
+- [CSS](./docs/src/notes/CSS.md)
 
-- TypeScript
+- [JavaScript](./docs/src/notes/Javascript.md)
 
-- React
+- [TypeScript](./docs/src/notes/Typescript.md)
 
-- Vue
+- [React](./docs/src/notes/React.md)
 
-- 工程化
+- [Vue](./docs/src/notes/Vue.md)
 
-- 计算机网络
+- [Node.js](./docs/src/notes/NodeJS.md)
 
-- 浏览器
+- [Git](./docs/src/notes/Git.md)
 
-- 数据结构和算法
+- [工程化](./docs/src/notes/工程化.md)
 
-- 设计模式
+- [计算机网络](./docs/src/notes/计算机网络.md)
 
-- 面经
+- [浏览器相关](./docs/src/notes/浏览器相关.md)
 
-## Preview
+- [数据结构和算法](./docs/src/notes/数据结构和算法.md)
+
+- [设计模式](./docs/src/notes/设计模式.md)
+
+- [场景技巧](./docs/src/notes/场景技巧.md)
+
+- [面经](./docs/src/interviews/index.md)
+
+## Gallery
 
 ![homepage](./images//homepage.png)
