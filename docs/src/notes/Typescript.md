@@ -67,3 +67,51 @@ enum Fruits = { Apple = 'apple', Banana = 'banana', Orange = 'orange'}
 10. `ReturnType<T>`: 获取函数类型 `T` 的返回类型。
 
 11. `Parameters<T>`: 获取函数类型 `T` 的参数类型组成的元组类型。
+
+## 说说 TypeScript 中的类以及它的应用场景？
+
+类（class）是 OOP 中实现信息封装的基础，传统的面向对象语言基本都是基于类的，而 JavaScript 基于原型的方式让开发者多了一些理解成本。在 ES6 之后，JavaScript 也引入了`class`关键字，虽然本质上还是构造函数，但在语法层面上更加贴近面向对象编程的思想。
+
+JavaScript 虽然引入了类，但依然还有一些特性没有实现，例如修饰符和抽象类等，TypeScript 则弥补了这些不足，提供了完整的类特性支持。
+
+- 继承：通过`extends`关键字实现类的继承。
+
+- 修饰符：
+
+  - public：默认修饰符，对外可见。
+  - private：对外不可见，只能在类的内部访问。
+  - protected：对外可见，但只能在类和其子类中访问。
+  - readonly：只读属性，只能在声明时或构造函数中初始化。
+
+- 静态属性：通过`static`关键字声明静态属性，这些属性存在于类本身，而不是类的实例上。访问这些属性需要通过`类名.属性名`的方式。我们知道在 JavaScript 中，类本质是一个构造函数，而函数本身就是一个对象，`static`声明的属性是直接挂载到函数对象之上，而类中其他的属性则是挂载到构造函数的原型对象上，因此实例可以访问到非静态属性，而静态属性只能通过类名来访问。例如 JavaScript 中的`Number.MAX_VALUE`。
+
+```ts
+class Student {
+  static count = 0;
+  constructor() {
+    Student.count++;
+  }
+}
+const s1 = new Student();
+Student.count; // 1
+```
+
+- 抽象类：通过`abstract`关键字声明抽象类，抽象类不能被实例化，只能被继承。抽象类可以包含抽象方法，抽象方法不能有具体实现，需要由子类实现。抽象类可以包含属性和方法，属性和方法的具体实现由子类提供。
+
+```ts
+abstract class Animal {
+    abstract makeSound(): void;
+    move(): void {
+        console.log('roaming the earth...');
+    }
+}
+}
+
+class Dog extends Animal {
+    makeSound(): void {
+        console.log('woof woof!');
+    }
+}
+```
+
+**应用场景**： 虽然前端开发中函数式编程已经成为主流，但在一些场景下，类可以让我们更好地组织代码，提高代码的可维护性。例如前端中常见的几种设计模式：单例模式和发布-订阅模式等，使用类来实现更加简单直观，结构上也更加清晰。另外，亦可以使用类来编写组件，例如 React 中的类组件，不过现在更加推荐使用函数式组件。
