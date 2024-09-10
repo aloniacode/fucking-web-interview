@@ -115,3 +115,131 @@ class Dog extends Animal {
 ```
 
 **应用场景**： 虽然前端开发中函数式编程已经成为主流，但在一些场景下，类可以让我们更好地组织代码，提高代码的可维护性。例如前端中常见的几种设计模式：单例模式和发布-订阅模式等，使用类来实现更加简单直观，结构上也更加清晰。另外，亦可以使用类来编写组件，例如 React 中的类组件，不过现在更加推荐使用函数式组件。
+
+## TypeScript 中装饰器是什么？它有什么应用场景？
+
+装饰器是一种特殊类型的声明，它可以被附加到类，方法，访问符，属性或参数上，是一种在不改变原类和使用继承的情况下动态扩展对象的功能。本质上，它其实是`Object.defineProperty()`的语法糖。
+
+::: tip 提示
+要使用装饰器，需要在配置文件中开启：
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "experimentalDecorators ": true
+  }
+}
+```
+
+:::
+
+- 对类使用装饰器,实际就是将构造函数传入装饰器函数，然后对构造函数进行修改。
+
+```ts
+function addAge(constructor: Function) {
+  constructor.prototype.age = 18;
+}
+@addAge
+class Person {
+  name: string;
+  constructor(name: string) {
+    this.name = name;
+  }
+}
+const a = new Person("mike");
+console.log(a.age); // 18
+```
+
+- 对方法/属性使用装饰器，此时装饰器函数接收三个参数，`target`是对象原型，`propertyKey`是方法/属性名，`descriptor`是属性描述符，它们实际上就是`Object.defineProperty()`的三个参数。
+
+```ts
+function property(target: any, propertyKey: string) {
+  console.log(target, propertyKey);
+}
+
+function method(
+  target: any,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+) {
+  console.log(target, propertyKey, descriptor);
+  descriptor.writable = false;
+}
+
+class Person {
+  @property
+  name: string;
+  constructor(name: string) {
+    this.name = name;
+  }
+  @method
+  sayHello() {
+    console.log(`hello, ${this.name}`);
+  }
+}
+```
+
+- 对参数使用装饰器，此时装饰器函数接收三个参数，`target`是对象原型，`propertyKey`是参数名，`index`是参数索引。
+
+```ts
+function logger(target: any, propertyKey: string, index: number) {
+  console.log(target, propertyKey, index);
+}
+
+class Person {
+  say(@logger words: string) {
+    console.log(words);
+  }
+}
+```
+
+- 装饰器工厂，可以接收参数，返回一个装饰器函数。
+
+```ts
+function addAge(age: number) {
+  return function (constructor: Function) {
+    constructor.prototype.age = age;
+  };
+}
+@addAge(18)
+class Person {
+  name: string;
+  constructor(name: string) {
+    this.name = name;
+  }
+}
+const a = new Person("mike");
+console.log(a.age); // 18
+```
+
+当多个装饰器应用于一个声明上，将由上至下依次对装饰器表达式求值，求值结果会被当作函数（入栈），由下至上依次调用（出栈）。
+
+```ts
+function f() {
+ console.log("f(): evaluated");
+ return function (target, propertyKey: string, descriptor: PropertyDesc
+riptor) {
+ console.log("f(): called");
+ }
+}
+function g() {
+ console.log("g(): evaluated");
+ return function (target, propertyKey: string, descriptor: PropertyDesc
+riptor) {
+ console.log("g(): called");
+ }
+}
+class Person {
+ @f()
+ @g()
+ sayHello() {}
+}
+// 输出：
+// f(): evaluated
+// g(): evaluated
+// g(): called
+// f(): called
+```
+
+应用场景：利用装饰器在不改变原有代码的前提下对类进行扩展的特性，可以便捷实现诸如日志记录，缓存，权限校验等功能，在提高重用性得同时也提高了代码的可读性和可维护性。
