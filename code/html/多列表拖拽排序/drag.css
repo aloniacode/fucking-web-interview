@@ -1,0 +1,36 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.container {
+    display: flex;
+    gap: 8px;
+}
+ul {
+  width: 500px;
+  list-style: none;
+  margin: 0;
+  padding: 10px;
+  border: 1px solid #000;
+  border-radius: 6px;
+}
+li {
+  height: 50px;
+  background-color: #1e527c;
+  color: #fff;
+  text-align: center;
+  line-height: 50px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #000;
+  cursor: grab;
+}
+li:active {
+  cursor: grabbing;
+}
+.moving {
+  background: transparent;
+  color: transparent;
+  border: 1px dashed #000;
+}
