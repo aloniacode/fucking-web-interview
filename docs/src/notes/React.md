@@ -22,6 +22,68 @@
 2. 复用逻辑。
 3. class 组件的 this 不易理解，给使用者造成额外的心智负担。
 
+## 为什么 React 推荐只在顶层使用 Hooks？
+
+::: details React 文档
+
+Don't call Hooks inside loops, conditions, nested functions, or try/catch/finally blocks. Instead, always use Hooks at the top level of your React function, before any early returns. You can only call Hooks while React is rendering a function component.
+
+不要在循环/条件/嵌套函数/`try`/`catch`/`finally` 块中调用 Hooks。相反，请始终在 React 函数的顶层使用 Hooks，在任何提前返回之前。你只能在使用函数式组件时调用 Hooks。
+
+:::
+
+和 Vue3 的 Composition API 相比，Vue 中使用 Hooks 就没有 React 这么多的限制，究其根本，在于 React 和 Vue 的设计原理不同。React 的 Hooks 基于 Fiber 架构，每一个组件内使用的 Hooks 都会在组件挂载时被加入到 Fiber 对象的 Hooks 链表中，当组件更新时，React 会依次执行这些链表中的 Hooks。而在循环/条件/嵌套函数/`try`/`catch`/`finally` 中使用 Hooks，会导致更新阶段的 Hooks 执行顺序和挂载时的执行顺序不一致，这也就导致下一次更新时找不到对应的 Hook，从而导致错误。
+
+```tsx
+function App() {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    console.log(`count changed to: ${count}`);
+  }, [count]);
+
+  // 正常运行
+  if (true) {
+    useEffect(() => {
+      console.log(`Conditional effect,count changed to: ${count}`);
+    }, [count]);
+  }
+
+  // 初始化正常运行，修改count时报错
+  if (count > 0) {
+    useEffect(() => {
+      console.log(`Conditional effect,count changed to: ${count}`);
+    }, [count]);
+  }
+  return (
+    <>
+      <div>{count}</div>
+      <button onClick={() => setCount((prev) => prev + 1)}>
+        Change Counter
+      </button>
+    </>
+  );
+}
+```
+
+当修改 count 时，错误如下:
+
+::: danger 错误信息
+
+Warning: React has detected a change in the order of Hooks called by App. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks:
+
+| Index | Previous render | Next render |
+| :---: | :-------------: | :---------: |
+|   1   |    useState     |  useState   |
+|   2   |    useEffect    |  useEffect  |
+|   3   |    useEffect    |  useEffect  |
+|   4   |    undefined    |  useEffect  |
+
+:::
+
+从错误信息就可以看到，`state`的修改导致组件重新渲染，而在渲染阶段加入了新的`useEffect`, 导致`Current Tree`和`WorkInProgress Tree`的`effect`链表不一致（参考 React Diff 原理）。而如如果在组件挂载阶段就能加入 Hooks 链表并在后续的更新中不改变 Hooks 的执行顺序，则不会报错。
+
+**总结**：只要能保证不修改 Hooks 的执行顺序，就可以在循环/条件/嵌套函数/`try`/`catch`/`finally` 等语句块中使用 Hooks，但是**非常不推荐**这样使用。
+
 ## useEffect 和 useLayoutEffect 的区别 以及使用场景
 
 ```js
