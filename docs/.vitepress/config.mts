@@ -12,6 +12,11 @@ export default defineConfig({
       { text: "", link: "/" },
       { text: "笔记", link: "/notes/" },
       { text: "面经", link: "/interviews/" },
+      { text: "前端混沌图", link: "/web-chaos-graph/" },
+      {
+        text: "Code",
+        link: "https://github.com/chenbinli-dev/fuck-interview/code",
+      },
     ],
     sidebar: {
       "/notes/": [
@@ -75,5 +80,10 @@ export default defineConfig({
   },
   sitemap: {
     hostname: "https://fuck-interview.vercel.app/",
+  },
+  markdown: {
+    image: {
+      lazyLoading: true,
+    },
   },
 });
