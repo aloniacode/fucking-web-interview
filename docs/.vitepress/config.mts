@@ -15,7 +15,7 @@ export default defineConfig({
       { text: "开源仓库", link: "/opensource-repos/" },
       {
         text: "Code",
-        link: "https://github.com/chenbinli-dev/fuck-interview/code",
+        link: "https://github.com/chenbinli-dev/fuck-interview/tree/master/code",
       },
     ],
     sidebar: {
