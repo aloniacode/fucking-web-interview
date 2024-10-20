@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>页面卡顿监控</title>
+  </head>
+  <body>
+    <button>点击触发长任务</button>
+    <script>
+      const button = document.querySelector("button");
+      button.addEventListener("click", () => {
+        // 模拟长任务
+        const start = Date.now();
+        while (Date.now() - start < 5000) {
+          // 空循环
+        }
+        alert("长任务执行完毕");
+      });
+
+      // 检测页面是否有长任务
+      const observer = new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          //   console.log(entry.duration);
+          if (entry.duration > 5000) {
+            console.log("页面卡顿");
+            // 埋点上报
+          }
+        }
+      });
+      observer.observe({ type: "longtask", buffered: true });
+    </script>
+  </body>
+</html>
