@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>高阶函数-分时函数</title>
+    <style>
+      body {
+        padding: 60px;
+        height: 100%;
+      }
+      .container {
+        display: flex;
+      }
+      .left,
+      .right {
+        flex: 1;
+      }
+      button {
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        background-color: #4caf50;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #3e8e41;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="left">
+        <button id="btn1">普通插入500000个元素</button>
+        <ul class="list1"></ul>
+      </div>
+      <div class="right">
+        <button id="btn2">使用分时函数插入500000个元素</button>
+        <ul class="list2"></ul>
+      </div>
+    </div>
+  </body>
+  <script>
+    // 普通插入500000个元素
+    const tasks = Array.from({ length: 500000 }, (_, i) => () => {
+      const div = document.createElement("div");
+      div.innerText = i;
+      const ul = document.querySelector("ul");
+      ul.appendChild(div);
+    });
+    const button = document.querySelector("button");
+    button.addEventListener("click", () => {
+      const start = performance.now();
+      for (const task of tasks) {
+        task();
+      }
+    });
+    // 使用分时函数插入500000个元素
+    function performTasks(tasks) {
+      if (tasks.length === 0) {
+        return;
+      }
+      let index = 0;
+      function _run() {
+        requestIdleCallback((idle) => {
+          while (index < tasks.length && idle.timeRemaining() > 0) {
+            tasks[index++]();
+          }
+          if (index < tasks.length) _run();
+        });
+      }
+      _run();
+    }
+    const tasks2 = Array.from({ length: 500000 }, (_, i) => () => {
+      const div = document.createElement("div");
+      div.innerText = i;
+      const ul = document.querySelector(".list2");
+      ul.appendChild(div);
+    });
+    const button2 = document.querySelector("#btn2");
+    button2.addEventListener("click", () => {
+      performTasks(tasks2);
+    });
+  </script>
+</html>
