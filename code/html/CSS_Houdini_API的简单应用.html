@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      @property --direc {
+        syntax: "<angle>";
+        initial-value: 0deg;
+        inherits: false;
+      }
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+        height: 100vh;
+        background-color: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .container {
+        position: relative;
+        width: 300px;
+        height: 500px;
+        background: linear-gradient(var(--direc), #ff005a, #8c00ff);
+        animation: rotate 3s linear infinite;
+        border-radius: 8px;
+        transition: all 0.5s linear;
+      }
+      @keyframes rotate {
+        to {
+          --direc: 360deg;
+        }
+      }
+      .container::before {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        background: #000;
+      }
+      .container:hover {
+        cursor: pointer;
+        transform: scale(1.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container"></div>
+  </body>
+</html>
