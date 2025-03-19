@@ -42,8 +42,12 @@ export default defineConfig({
             { text: "数据结构和算法", link: "/notes/数据结构和算法" },
             { text: "设计模式", link: "/notes/设计模式" },
             {
-              text: "场景技巧",
-              link: "/notes/场景技巧",
+              text: "场景技巧一",
+              link: "/notes/场景技巧一",
+            },
+            {
+              text: "场景技巧二",
+              link: "/notes/场景技巧二",
             },
           ],
         },
