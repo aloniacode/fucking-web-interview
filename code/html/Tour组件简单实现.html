@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tour组件简单实现</title>
+    <style>
+      html,
+      body {
+        height: 100vh;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 50px;
+      }
+      .container {
+        display: flex;
+        justify-content: center;
+        height: 50px;
+        gap: 50px;
+      }
+      .item {
+        text-align: center;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+      }
+      button {
+        border: none;
+        background-color: black;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      button:hover {
+        opacity: 0.8;
+      }
+      button:active {
+        opacity: 1;
+      }
+
+      #tour-overlay {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 1000;
+      }
+
+      #tip-container {
+        position: relative;
+        padding: 10px;
+        background-color: white;
+        border-radius: 8px;
+        z-index: 1001;
+        position: absolute;
+        display: none;
+        width: 400px;
+      }
+      .tip-arrow {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%) rotate(45deg);
+        background-color: white;
+        z-index: 1000;
+      }
+      .tip-title {
+        text-align: center;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+      .tip-footer {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      #target-border {
+        position: absolute;
+        border: 4px solid #38a169;
+        z-index: 1001;
+        border-radius: 8px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="element1" class="item">元素1</div>
+      <div id="element2" class="item">元素2</div>
+      <div id="element3" class="item">元素3</div>
+    </div>
+    <button id="start">Start Tour</button>
+    <div id="target-border"></div>
+    <div id="tour-overlay"></div>
+    <div id="tip-container">
+      <div class="tip-arrow"></div>
+      <div class="tip-title"></div>
+      <div class="tip-content"></div>
+      <div class="tip-footer">
+        <button id="prev-btn" style="display: none">Prev</button>
+        <button id="next-btn">Next</button>
+        <button id="close-btn">Close</button>
+      </div>
+    </div>
+  </body>
+  <script>
+    const steps = [
+      {
+        id: "step1",
+        targetSelector: "#element1",
+        title: "步骤1",
+        content: "这是步骤1的内容",
+      },
+      {
+        id: "step2",
+        targetSelector: "#element2",
+        title: "步骤2",
+        content: "这是步骤2的内容",
+      },
+      {
+        id: "step3",
+        targetSelector: "#element3",
+        title: "步骤3",
+        content: "这是步骤3的内容",
+      },
+    ];
+    let currentStep = 0;
+    const offset = 10; // 偏移量，用于裁剪遮罩层
+    function showStep(index) {
+      const step = steps[index];
+      const target = document.querySelector(step.targetSelector);
+      const overlay = document.querySelector("#tour-overlay");
+      const tipContainer = document.querySelector("#tip-container");
+      const targetBorder = document.querySelector("#target-border");
+
+      // 根据目标元素位置计算提示框位置和边框位置、大小
+      const rect = target.getBoundingClientRect();
+      const tipRect = tipContainer.getBoundingClientRect();
+      const tipLeft = rect.left + rect.width / 2 - tipRect.width / 2;
+      const tipTop = rect.bottom + 20;
+      tipContainer.style.left = `${tipLeft}px`;
+      tipContainer.style.top = `${tipTop}px`;
+      // 更新提示框内容
+      tipContainer.querySelector(".tip-title").textContent = step.title;
+      tipContainer.querySelector(".tip-content").textContent = step.content;
+      // 计算目标元素的位置和大小
+      const newRect = {
+        left: rect.left - offset,
+        top: rect.top - offset,
+        right: rect.right + offset,
+        bottom: rect.bottom + offset,
+      };
+      targetBorder.style.left = `${newRect.left - 4}px`;
+      targetBorder.style.top = `${newRect.top - 4}px`;
+      targetBorder.style.width = `${newRect.right - newRect.left}px`;
+      targetBorder.style.height = `${newRect.bottom - newRect.top}px`;
+      targetBorder.style.display = "block";
+      const clipPath = `
+    polygon(
+        0% 0%,
+        0% 100%,
+        ${newRect.left}px 100%,
+        ${newRect.left}px ${newRect.top}px, 
+        ${newRect.right}px ${newRect.top}px,
+        ${newRect.right}px ${newRect.bottom}px, 
+        ${newRect.left}px ${newRect.bottom}px, 
+        ${newRect.left}px 100%, 
+        100% 100%, 
+        100% 0%
+    )
+  `;
+      // 更新遮罩层的 clip-path
+      overlay.style.clipPath = clipPath;
+    }
+
+    function closeStep() {
+      const overlay = document.querySelector("#tour-overlay");
+      const tipContainer = document.querySelector("#tip-container");
+      const prevBtn = document.querySelector("#prev-btn");
+      const targetBorder = document.querySelector("#target-border");
+      targetBorder.style.display = "none";
+      overlay.style.display = "none";
+      tipContainer.style.display = "none";
+      prevBtn.style.display = "none";
+      currentStep = 0;
+    }
+    const prevBtn = document.querySelector("#prev-btn");
+    const nextBtn = document.querySelector("#next-btn");
+    // 绑定按钮事件
+    prevBtn.addEventListener("click", () => {
+      if (--currentStep === 0) {
+        prevBtn.style.display = "none";
+      }
+      showStep(currentStep);
+      nextBtn.style.display = "block";
+    });
+    nextBtn.addEventListener("click", () => {
+      currentStep++;
+      showStep(currentStep);
+      prevBtn.style.display = "block";
+      if(currentStep === steps.length - 1){
+        nextBtn.style.display = "none";
+      }
+    });
+    const startBtn = document.querySelector("#start");
+    const closeBtn = document.querySelector("#close-btn");
+    startBtn.addEventListener("click", () => {
+      const overlay = document.querySelector("#tour-overlay");
+      const tipContainer = document.querySelector("#tip-container");
+      overlay.style.display = "block";
+      tipContainer.style.display = "block";
+      showStep(currentStep);
+    });
+    closeBtn.addEventListener("click", () => {
+      closeStep();
+    });
+  </script>
+</html>
