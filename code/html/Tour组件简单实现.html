@@ -7,10 +7,12 @@
     <style>
       html,
       body {
-        height: 100vh;
+        height: 100%;
         width: 100%;
         padding: 0;
         margin: 0;
+      }
+      body {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -36,6 +38,7 @@
         padding: 10px 20px;
         border-radius: 8px;
         cursor: pointer;
+        width: fit-content;
       }
       button:hover {
         opacity: 0.8;
@@ -114,6 +117,11 @@
     </div>
   </body>
   <script>
+    /*
+    * 实现原理，通过设置遮罩层和提示框的位置和大小，裁剪遮罩层来凸显目标元素，实现导览功能。
+    * 核心问题：根据目标元素的位置和大小计算出遮罩层的clip-path以及提示框的位置。
+    */
+
     const steps = [
       {
         id: "step1",
@@ -208,7 +216,7 @@
       currentStep++;
       showStep(currentStep);
       prevBtn.style.display = "block";
-      if(currentStep === steps.length - 1){
+      if (currentStep === steps.length - 1) {
         nextBtn.style.display = "none";
       }
     });
