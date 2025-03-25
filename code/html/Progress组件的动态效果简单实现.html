@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Progress组件的简单实现</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      .container {
+        height: 20px;
+        border: 1px solid #ccc;
+        width: 400px;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .progress {
+        --translate-x: -100%;
+        height: 100%;
+        transition: width 0.2s ease-in-out;
+        background: #38a169;
+      }
+      .linear-rang-animation {
+        width: 210%;
+        animation: linear-rang 1s cubic-bezier(0.694, 0.0482, 0.335, 1) 0s
+          infinite normal none running;
+      }
+      @keyframes linear-rang {
+        0% {
+          transform: scaleX(1) translateX(var(--translate-x));
+        }
+        100% {
+          transform: scaleX(0) translateX(var(--translate-x));
+        }
+      }
+      button {
+        border: none;
+        background: black;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="title">动态Loading效果</h1>
+    <div class="container">
+      <div class="progress linear-rang-animation "></div>
+    </div>
+  </body>
+</html>
