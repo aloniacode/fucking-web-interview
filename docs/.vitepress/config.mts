@@ -10,62 +10,58 @@ export default defineConfig({
     logo: "/favicon.png",
     nav: [
       { text: "", link: "/" },
-      { text: "笔记", link: "/notes/" },
-      { text: "面经", link: "/interviews/" },
+      {
+        text: "基础",
+        items: [
+          { text: "HTML", link: "/notes/HTML" },
+          { text: "CSS", link: "/notes/CSS" },
+          { text: "JavaScript", link: "/notes/Javascript" },
+          { text: "TypeScript", link: "/notes/Typescript" },
+          { text: "NodeJS", link: "/notes/NodeJS" },
+          { text: "React", link: "/notes/React" },
+          { text: "Vue", link: "/notes/Vue" },
+          { text: "工程化", link: "/notes/工程化" },
+          { text: "计算机网络", link: "/notes/计算机网络" },
+          { text: "浏览器", link: "/notes/浏览器相关" },
+          { text: "Git", link: "/notes/Git" },
+        ],
+      },
+      {
+        text: "进阶",
+        items: [
+          { text: "数据结构和算法", link: "/notes/数据结构和算法" },
+          { text: "设计模式", link: "/notes/设计模式" },
+          {
+            text: "场景技巧一",
+            link: "/notes/场景技巧一",
+          },
+          {
+            text: "场景技巧二",
+            link: "/notes/场景技巧二",
+          },
+        ],
+      },
+      {
+        text: "面经",
+        items: [
+          { text: "2024.3.22", link: "/interviews/2024.3.22" },
+          { text: "2024.3.29", link: "/interviews/2024.3.29" },
+        ],
+      },
       { text: "开源仓库", link: "/opensource-repos/" },
       {
         text: "Code",
         link: "https://github.com/chenbinli-dev/fuck-interview/tree/master/code",
       },
     ],
-    sidebar: {
-      "/notes/": [
-        {
-          text: "Basic",
-          items: [
-            { text: "HTML", link: "/notes/HTML" },
-            { text: "CSS", link: "/notes/CSS" },
-            { text: "JavaScript", link: "/notes/Javascript" },
-            { text: "TypeScript", link: "/notes/Typescript" },
-            { text: "NodeJS", link: "/notes/NodeJS" },
-            { text: "React", link: "/notes/React" },
-            { text: "Vue", link: "/notes/Vue" },
-            { text: "工程化", link: "/notes/工程化" },
-            { text: "计算机网络", link: "/notes/计算机网络" },
-            { text: "浏览器", link: "/notes/浏览器相关" },
-            { text: "Git", link: "/notes/Git" },
-          ],
-        },
-        {
-          text: "Advanced",
-          items: [
-            { text: "数据结构和算法", link: "/notes/数据结构和算法" },
-            { text: "设计模式", link: "/notes/设计模式" },
-            {
-              text: "场景技巧一",
-              link: "/notes/场景技巧一",
-            },
-            {
-              text: "场景技巧二",
-              link: "/notes/场景技巧二",
-            },
-          ],
-        },
-      ],
-      "/interviews/": [
-        {
-          text: "2024",
-          items: [
-            { text: "2024.3.22", link: "/interviews/2024.3.22" },
-            { text: "2024.3.29", link: "/interviews/2024.3.29" },
-          ],
-        },
-      ],
-    },
     socialLinks: [
       {
         icon: "github",
         link: "https://github.com/chenbinli-dev/fuck-interview",
+      },
+      {
+        icon: "bilibili",
+        link: "https://space.bilibili.com/164577534",
       },
     ],
     footer: {
