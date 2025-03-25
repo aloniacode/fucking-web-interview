@@ -2,9 +2,21 @@
 sidebar: false
 ---
 
+<script setup>
+import Tag from '../components/Tag.vue'
+</script>
+
 # 一些有趣的开源项目
 
 - [web-chaos-graph](https://github.com/yoavbls/web-chaos-graph). ——前端混沌图，使用 Excalidraw 制作,描述前端工具和框架的依赖关系。
+
+## 组件相关
+
+- [Chakra UI](https://github.com/chakra-ui). ———一个 React 组件库，提供了一组功能丰富的组件，可以帮助你快速构建出色的用户界面。<Tag text="React" />
+
+- [Zag.js](https://github.com/chakra-ui/zag). ———一组与框架无关的 UI 组件模式，通过有限状态机来实现组件的状态和交互。
+
+- [Reka UI](https://github.com/unovue/reka-ui). ——对标 Chakra UI 的 Vue 版本。<Tag text="Vue" />
 
 ## 数据和状态管理
 
@@ -23,9 +35,9 @@ sidebar: false
 
 ## ORM
 
-- [Prisma](https://github.com/prisma/prisma). ———一个开源的数据库ORM，支持 MySQL、PostgreSQL、SQLite、SQL Server、MongoDB等。
+- [Prisma](https://github.com/prisma/prisma). ———一个开源的数据库 ORM，支持 MySQL、PostgreSQL、SQLite、SQL Server、MongoDB 等。
 
-- [Drizzle](https://github.com/drizzle-team/drizzle-orm). 可以运行在任意主要JS运行时中的轻量级的TypeScript ORM，支持MySQL、PostgreSQL、SQLite以及常见的Serverless数据库。
+- [Drizzle](https://github.com/drizzle-team/drizzle-orm). 可以运行在任意主要 JS 运行时中的轻量级的 TypeScript ORM，支持 MySQL、PostgreSQL、SQLite 以及常见的 Serverless 数据库。
 
 ## 日志库
 
