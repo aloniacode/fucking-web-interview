@@ -51,13 +51,13 @@ export default defineConfig({
       { text: "开源仓库", link: "/opensource-repos/" },
       {
         text: "Code",
-        link: "https://github.com/chenbinli-dev/fuck-interview/tree/master/code",
+        link: "https://github.com/Time1sMoney/fuck-interview/tree/master/code",
       },
     ],
     socialLinks: [
       {
         icon: "github",
-        link: "https://github.com/chenbinli-dev/fuck-interview",
+        link: "https://github.com/Time1sMoney/fuck-interview",
       },
       {
         icon: "bilibili",
