@@ -16,12 +16,15 @@ import Tag from '../components/Tag.vue'
 
 - [Zag.js](https://github.com/chakra-ui/zag). ———一组与框架无关的 UI 组件模式，通过有限状态机来实现组件的状态和交互。
 
-- [Reka UI](https://github.com/unovue/reka-ui). ——对标 Chakra UI 的 Vue 版本。<Tag text="Vue" />
+- [Reka UI](https://github.com/unovue/reka-ui). ——对标 Radix UI 的 Vue 版本组件库。<Tag text="Vue" />
 
 ## 数据和状态管理
 
 - [Immer](https://github.com/immerjs/immer). ——不可变数据库，相比 Immutable.js 更小更易用，不需要额外的数据结构学习。
+
 - [Signals](https://github.com/preactjs/signals). ——在任意框架中使用样式管理状态。
+
+- [Zustand](https://github.com/pmndrs/zustand). ———轻量、快速和可扩展的React状态管理解决方案，基于Hook的API以及没有样板代码和固执己见。<Tag text="React" /> <Tag text="推荐" />
 
 ## 网络请求
 
@@ -33,6 +36,12 @@ import Tag from '../components/Tag.vue'
 
 - [Joi](https://github.com/hapijs/joi). ———最强大的 JavaScript 数据验证库。
 
+- [Zod](https://github.com/colinhacks/zod). ———TypeScript优先的模式声明和验证库。
+
+## 动画
+
+- [Framer Motion](https://github.com/motiondivision/motion). ———适用于 React 和 JavaScript 的现代动画库。
+
 ## ORM
 
 - [Prisma](https://github.com/prisma/prisma). ———一个开源的数据库 ORM，支持 MySQL、PostgreSQL、SQLite、SQL Server、MongoDB 等。
@@ -42,3 +51,7 @@ import Tag from '../components/Tag.vue'
 ## 日志库
 
 - [Winston](https://github.com/winstonjs/winston). ———一个灵活的、可扩展的日志库，支持多种日志格式。
+
+## 其他
+
+- [Shiki](https://github.com/shikijs/shiki). ———优雅且强大的语法高亮器。
