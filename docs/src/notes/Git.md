@@ -22,7 +22,8 @@ git remote set-url --push origin <B repository url>
 // 推送到B仓库
 git push --mirror
 ```
-2. 使用`git bundle`。
+
+2.使用`git bundle`。
 
 ```sh
 //在A仓库创建bundle文件
@@ -30,6 +31,7 @@ git bundle create repoA.bundle --all
 // 将repoA.bundle文件上传到B仓库，在执行clone命令
 git clone repoA.bundle <B repository Directory>
 ```
+
 ::: warning
 请确保B仓库是空仓库，如果待迁移的仓库含有子模块，则需要额外处理子模块的迁移。
 :::

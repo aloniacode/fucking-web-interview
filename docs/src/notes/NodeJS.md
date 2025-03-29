@@ -26,7 +26,7 @@ this.f = 6;
 const moduleId = getModuleId(modulePath);
 ```
 
-2. 根据模块 id 判断是否有缓存，如果有缓存，则直接返回缓存的模块对象。
+2.根据模块 id 判断是否有缓存，如果有缓存，则直接返回缓存的模块对象。
 
 ```js
 if (moduleCache[moduleId]) {
@@ -34,7 +34,7 @@ if (moduleCache[moduleId]) {
 }
 ```
 
-3. 如果没有缓存，则运行模块，也就是将模块中的代码放到一个函数中执行。首先需要定义这个执行函数，`exports`参数初始化为一个空对象，`require`参数也就是当前这个`require`函数，`module`参数初始化为一个对象，它只有一个`exports`属性，`__filename`参数初始化为模块的绝对路径，`__dirname`参数初始化为模块所在的目录。这也就是为什么我们可以在模块中使用这些参（可以在模块中使用`arguments`对象来查看这些参数）。
+3.如果没有缓存，则运行模块，也就是将模块中的代码放到一个函数中执行。首先需要定义这个执行函数，`exports`参数初始化为一个空对象，`require`参数也就是当前这个`require`函数，`module`参数初始化为一个对象，它只有一个`exports`属性，`__filename`参数初始化为模块的绝对路径，`__dirname`参数初始化为模块所在的目录。这也就是为什么我们可以在模块中使用这些参（可以在模块中使用`arguments`对象来查看这些参数）。
 
 ```js
 function _require(exports, require, module, __filename, __dirname) {
@@ -42,7 +42,7 @@ function _require(exports, require, module, __filename, __dirname) {
 }
 ```
 
-4. 准备参数并运行执行函数。
+4.准备参数并运行执行函数。
 
 ```js
 const module = {
@@ -55,7 +55,7 @@ const __dirname = getDirname(__filename);
 _require.call(exports, exports, _require, module, __filename, __dirname);
 ```
 
-5. 执行后缓存模块并返回`module.exports`对象。
+5.执行后缓存模块并返回`module.exports`对象。
 
 ```js
 moduleCache[moduleId] = module.exports;
@@ -107,7 +107,7 @@ console.log(buf.toString("utf8")); // Hello, world!
 
 流的种类如下：
 
-1. Readable 流，用于从数据源读取数据，例如` fs.createWriteStream()`。
+1. Readable 流，用于从数据源读取数据，例如`fs.createWriteStream()`。
 
 2. Writable 流，用于向数据目的地写入数据,例如`fs.createReadStream()`。
 
@@ -122,7 +122,7 @@ const duplex = new Duplex({
 });
 ```
 
-4. Transform 流(双工流)，用于在数据读写时对数据进行转换。例如在文件压缩操作时向文件写入压缩数据，并从文件中读取解压数据。
+4.Transform 流(双工流)，用于在数据读写时对数据进行转换。例如在文件压缩操作时向文件写入压缩数据，并从文件中读取解压数据。
 
 ```js
 const { Transform } = require("stream");
@@ -152,10 +152,8 @@ server.listen(3000);
 
 - 构建工具的底层操作，例如`gulp`等。
 
-
 ## 说说Node中的Event Loop(事件循环)以及它和浏览器中的事件循环的区别？
 
- 
 1. 浏览器的事件循环是根据HTML标准实现的，而Node中的事件循环是基于 `libuv` 实现的。`libuv` 是一个C语言实现的高性能解决单线程非阻塞异步 I/O 的开源库，它本质上是对常见操作系统底层异步I/O操作的封装，Node底层就是调用它的API。
 
 2. 浏览器中的事件循环和Node中的事件循环都将异步任务划分为宏任务和微任务：
@@ -168,13 +166,11 @@ server.listen(3000);
 
    - NodeJS宏任务： `setTimeout`、`setInterval`、 `setImmediate`、script（整体代码）、 I/O 操作。
 
-
 **执行差异**：
 
 浏览器中的事件循环：首先脚本本身的执行就是一个宏任务，在执行同步代码时遇到微任务就将它加入微任务队列(FIFO)，遇到宏任务就加入宏任务队列(FIFO)，当本次脚本的同步代码执行完毕（卡可以看作是一个宏任务结束），就查看微任务队列并依次执行，执行一个微任务就移除微任务队列直到微任务队列执行完毕；接着查看宏任务队列，依次执行。整体执行效果就是一个循环，宏任务->微任务 -> 宏任务。
 
 如果在一轮事件循环中，微任务和宏任务队列都为空，那么主线程会进入idle状态（休眠），此时会保持轮询事件循环，等待响应新的事件（用户输入交互，定时器到期）。
-
 
 Node中的事件循环：划分为六个阶段，也就是有六个宏任务队列，而微任务队列有两个 `process.nextTick` 队列和 `Promise` 队列，它们在进入下一个阶段前必须依次反复清空，直到两个队列完全没有即将到来的任务的时候再进入下一个阶段。`process.nextTick` 队列的优先级高于 `Pormise` 队列。
 
@@ -186,4 +182,3 @@ Node中的事件循环：划分为六个阶段，也就是有六个宏任务队�
 6. close callbacks阶段。执行执行所有注册 close 事件的回调函数。
 
 ![alt text](../assets/node_event_loop.png)
-

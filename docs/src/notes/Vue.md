@@ -105,13 +105,13 @@ Vue 的生命周期主要分为 8 个阶段：创建前后，更新前后，销�
 
 - 切换：`onDeactivated` 比如从 A 组件，切换到 B 组件，A 组件消失时执行。
 
-4. `v-if` 和 `v-for` 的优先级: Vue2 中 `v-for` 优先级高于 `v-if`,两者可以一起使用，但是会带来性能上地浪费；Vue3 中 `v-if` 优先级高于 `v-for`，一起使用会报错。
+4.`v-if` 和 `v-for` 的优先级: Vue2 中 `v-for` 优先级高于 `v-if`,两者可以一起使用，但是会带来性能上地浪费；Vue3 中 `v-if` 优先级高于 `v-for`，一起使用会报错。
 
-5. 响应式原理不同： Vue2 通过`Object.definedProperty()`的`get()`和`set()`来做数据劫持、结合和发布订阅者模式来实现，`Object.definedProperty()`会遍历每一个属性。而 Vue3 通过`Proxy`代理的方式实现，不需要像`Object.definedProperty()`的那样遍历每一个属性，有一定的性能提升。`Proxy`可以理解为在目标对象之前架设一层“拦截”，外界对该对象的访问都必须通过这一层拦截。这个拦截可以对外界的访问进行过滤和改写。
+5.响应式原理不同： Vue2 通过`Object.definedProperty()`的`get()`和`set()`来做数据劫持、结合和发布订阅者模式来实现，`Object.definedProperty()`会遍历每一个属性。而 Vue3 通过`Proxy`代理的方式实现，不需要像`Object.definedProperty()`的那样遍历每一个属性，有一定的性能提升。`Proxy`可以理解为在目标对象之前架设一层“拦截”，外界对该对象的访问都必须通过这一层拦截。这个拦截可以对外界的访问进行过滤和改写。
 
-6. diff 算法不同： Vue2 中的 DIFF 算法会遍历每一个虚拟 DOM 并进行新旧 DOM 对比，并返回一个`patch`对象来记录两个节点的不同，然后用`patch`信息去更新 DOM（边记录边更新）。这样的处理方式会比较每一个节点，对于没有发生更新的节点的比较是多余的，这就照成了不必要的性能浪费。Vue3 中改进了 diff 算法，在初始化时会给每一个节点添加`patchFlags`标识，在 diff 过程中只会比较`patchFlags`发生变化的节点，而`patchFlags`没有变化的节点做**静态标记**，渲染时直接复用节点。
+6.diff 算法不同： Vue2 中的 DIFF 算法会遍历每一个虚拟 DOM 并进行新旧 DOM 对比，并返回一个`patch`对象来记录两个节点的不同，然后用`patch`信息去更新 DOM（边记录边更新）。这样的处理方式会比较每一个节点，对于没有发生更新的节点的比较是多余的，这就照成了不必要的性能浪费。Vue3 中改进了 diff 算法，在初始化时会给每一个节点添加`patchFlags`标识，在 diff 过程中只会比较`patchFlags`发生变化的节点，而`patchFlags`没有变化的节点做**静态标记**，渲染时直接复用节点。
 
-7. Vue3 弃用了`filters`，内联模板，实例方法`$on`，`$off` 和 `$once`。
+7.Vue3 弃用了`filters`，内联模板，实例方法`$on`，`$off` 和 `$once`。
 
 具体变化请查阅文档: [Vue3 非兼容性改变](https://v3-migration.vuejs.org/zh/breaking-changes/)
 
@@ -121,17 +121,23 @@ Vue 的生命周期主要分为 8 个阶段：创建前后，更新前后，销�
 
 2. 更快的渲染性能： Vue3 重写了虚拟 DOM 的实现，带来了 diff 算法的优化（静态标记）,编译模板的优化（静态提升）以及更高效的组件初始化。
 
-**静态标记**： 对于不会发生变化的节点标记为静态，这样在下一次更新时可以跳过 diff 算法的比较以快速定位到需要更新的节点，从而提高性能。
+::: info 静态标记
+对于不会发生变化的节点标记为静态，这样在下一次更新时可以跳过 diff 算法的比较以快速定位到需要更新的节点，从而提高性能。
+:::
 
-**静态提升**： 对于不参与更新的静态部分，Vue3 会将其创建函数提升到所在模板渲染函数的外部，这样每次渲染时直接复用它们，避免了重复创建，在 diff 过程中也是会完全跳过。当有大量连续的静态节点时，它们会被进一步压缩为一个静态`vnode`，其中包含的是这些节点对应的 HTML 字符串,这些静态节点会直接使用`innerHTML`来挂载。而在初始挂载后，这个静态`vnode`会被缓存，当其他地方使用到它时会 Vue 使用原生`cloneNode()`方法克隆，这是非常高效的做法。
+::: info 静态提升
+对于不参与更新的静态部分，Vue3 会将其创建函数提升到所在模板渲染函数的外部，这样每次渲染时直接复用它们，避免了重复创建，在 diff 过程中也是会完全跳过。当有大量连续的静态节点时，它们会被进一步压缩为一个静态`vnode`，其中包含的是这些节点对应的 HTML 字符串,这些静态节点会直接使用`innerHTML`来挂载。而在初始挂载后，这个静态`vnode`会被缓存，当其他地方使用到它时会 Vue 使用原生`cloneNode()`方法克隆，这是非常高效的做法。
+:::
 
-**事件监听缓存**： 对事件监听器进行缓存，避免每次更新都要追踪其变化。
+::: info 事件监听缓存
+对事件监听器进行缓存，避免每次更新都要追踪其变化。
+:::
 
-3. 更小的体积： Vue3 移除了 Vue2 中不常用的 API，核心运行时比 Vue2 更小，并且支持 Tree-shaking，这意味着 Vue3 项目拥有更小的打包体积。
+3.更小的体积： Vue3 移除了 Vue2 中不常用的 API，核心运行时比 Vue2 更小，并且支持 Tree-shaking，这意味着 Vue3 项目拥有更小的打包体积。
 
-4. 更灵活的组合式 API： 组合式 API 提供了更直观、更灵活的方式来组织组件代码，使得代码更易读、易维护。
+4.更灵活的组合式 API： 组合式 API 提供了更直观、更灵活的方式来组织组件代码，使得代码更易读、易维护。
 
-5. 更好的响应式系统：Vue3 使用了`Proxy`来重写响应式系统，相比 Vue2 使用的`Object.defineProperty()`，更加直观和强大，并且可以在更深的层次上追踪响应式变量的变化，使得开发者能够更准确地监听数据变化。
+5.更好的响应式系统：Vue3 使用了`Proxy`来重写响应式系统，相比 Vue2 使用的`Object.defineProperty()`，更加直观和强大，并且可以在更深的层次上追踪响应式变量的变化，使得开发者能够更准确地监听数据变化。
 
 ## Vue 组件通信的方式有哪些？
 
@@ -165,7 +171,7 @@ Vue.prototype.$eventBus = new EventBus(); // 将$eventBus挂载到vue实例的�
 Vue.prototype.$eventBus = new Vue(); // Vue已经实现了Bus的功能
 ```
 
-5. 通过共同祖辈`$parent`或者`$root`搭建通信桥连,Vue3 中使用`getCurrentInstance()`获取当前组件实例，然后通过其`parent`或者`root`属性获取对应的父组件或祖先组件实例。**Vue3 中不推荐使用该方式**。
+5.通过共同祖辈`$parent`或者`$root`搭建通信桥连,Vue3 中使用`getCurrentInstance()`获取当前组件实例，然后通过其`parent`或者`root`属性获取对应的父组件或祖先组件实例。**Vue3 中不推荐使用该方式**。
 
 ```js
 // 兄弟组件
@@ -176,9 +182,9 @@ this.$parent.on("add", this.add);
 this.$parent.emit("add");
 ```
 
-6. 透传 Attributes: 适用于祖先组件传递给子孙组件。“透传 attribute”指的是传递给一个组件，却没有被该组件声明为`props`或`emits`的 attribute 或者`v-on`事件监听器。最常见的例子就是 class、style 和 id。Vue3 中可以使用`useAttrs()`访问所有的透传 attributes。
+6.透传 Attributes: 适用于祖先组件传递给子孙组件。“透传 attribute”指的是传递给一个组件，却没有被该组件声明为`props`或`emits`的 attribute 或者`v-on`事件监听器。最常见的例子就是 class、style 和 id。Vue3 中可以使用`useAttrs()`访问所有的透传 attributes。
 
-7. `Provide` 与 `Inject` （依赖注入）：祖先/顶层组件通过定义`provide(key,value)`来为子孙组件提供数据，子孙组件通过`inject(key,defaultValue)`来获取。
+7.`Provide` 与 `Inject` （依赖注入）：祖先/顶层组件通过定义`provide(key,value)`来为子孙组件提供数据，子孙组件通过`inject(key,defaultValue)`来获取。
 
 ```vue
 <script setup>
@@ -197,7 +203,7 @@ const count = inject("count");
 </script>
 ```
 
-8. Vuex/Pinia: 适用于需要跨多个复杂关系组件传递数据或页面共享状态等场景。
+8.Vuex/Pinia: 适用于需要跨多个复杂关系组件传递数据或页面共享状态等场景。
 
 ```js
 // stores/counter.js
@@ -384,13 +390,13 @@ Vue3 的快速 diff 算法在双端 diff 的基础上借鉴了字符串 diff 时
 
 ## Vue 中 key 的作用是什么？为什么需要绑定 key？
 
-`key`这个特殊的 attribute 主要作为 Vue 的虚拟 DOM 算法提示，在比较新旧节点列表时用于识别 vnode,以便在进行列表渲染时，能够尽可能高效地复用和更新已有的元素，而不是销毁和重新创建。当 Vue 更新列表时，它会尽量保留相同 key 的元素，从而减少 DOM 操作，提高性能。
+`key`这个特殊的 attribute 主要作为 Vue 的虚拟 DOM 算法提示，在比较新旧节点列表时用于识别 vnode，以便在进行列表渲染时，能够尽可能高效地复用和更新已有的元素，而不是销毁和重新创建。当 Vue 更新列表时，它会尽量保留相同 key 的元素，从而减少 DOM 操作，提高性能。
 
 需要绑定 key 的原因是确保在列表渲染时，每个元素都有一个唯一且稳定的标识符。如果不绑定 key，Vue 会使用元素的索引作为默认标识符，但这样可能会导致一些意外的问题，特别是在列表发生变化时。通过绑定 key，Vue 能够更准确地追踪每个元素的变化，确保列表的更新和渲染是准确的。如果`key`值重复也会导致渲染异常。
 
 ## Vue2 中组件的 data 属性为什么必须是函数？
 
-组件的`data`属性必须是函数，是为了避免多个组件实例之间共享数据，避免数据污染。
+组件的`data`属性必须是函数，是为了避免多个组件实例之间共享数据时造成数据污染。
 
 ```js
 function Component() {}
@@ -476,7 +482,7 @@ const vFocus = {
 </template>
 ```
 
-2. 在非`<script setup>`中，需要在`directive`选项中注册自定义指令。
+2.在非`<script setup>`中，需要在`directive`选项中注册自定义指令。
 
 ```js
 export default {
@@ -492,7 +498,7 @@ export default {
 };
 ```
 
-3. 全局注册时，使用 vue 实例的`directive`方法注册。
+3.全局注册时，使用 vue 实例的`directive`方法注册。
 
 ```js
 const app = createApp({});
@@ -600,7 +606,7 @@ axios.interceptors.response.use(
 );
 ```
 
-2. 对于代码逻辑的异常，可以通过全局的`app.config.errorHandler`或组件内`onErrorCaptured()`钩子函数来处理。
+2.对于代码逻辑的异常，可以通过全局的`app.config.errorHandler`或组件内`onErrorCaptured()`钩子函数来处理。
 
 ```ts
 // errorHandler
@@ -657,7 +663,7 @@ export function createPinia() {
 }
 ```
 
-- `defineStore`: 和`Vuex`不同的是`Pinia`定义的每一个 store 是相互独立不影响的。`defineStore`方法会创建一个使用`reactive`包裹的对象，这就是为什么 store 数据具有响应式。然后将通过参数传递进来的 state,getters,actions 进行处理合并到 store 对象上，最后将 store 对象挂载到 pinia 对象的`_s`属性上，id 为 key 值，store 为 value 值。由此可见，` Pinia`可以跨组件状态共享就是因为每个 store 都是单例模式。
+- `defineStore`: 和`Vuex`不同的是`Pinia`定义的每一个 store 是相互独立不影响的。`defineStore`方法会创建一个使用`reactive`包裹的对象，这就是为什么 store 数据具有响应式。然后将通过参数传递进来的 state,getters,actions 进行处理合并到 store 对象上，最后将 store 对象挂载到 pinia 对象的`_s`属性上，id 为 key 值，store 为 value 值。由此可见，`Pinia`可以跨组件状态共享就是因为每个 store 都是单例模式。
 
 ```js
 export function defineStore(id, { state, getters, actions }) {

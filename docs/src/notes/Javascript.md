@@ -81,7 +81,7 @@ var child = new Child();
 console.log(child.name); // 输出：Parent
 ```
 
-2. 构造函数继承。
+2.构造函数继承。
 
 优缺点：父类的属性不会共享，但是父类的原型的属性和方法无法被继承。
 
@@ -99,7 +99,7 @@ var child = new Child("Child", 10);
 console.log(child.name); // 输出：Child
 ```
 
-3. 组合继承。
+3.组合继承。
 
 优缺点：结合原型链继承和构造函数继承，但是父类多构造了一次，造成性能开销。
 
@@ -119,7 +119,7 @@ var child = new Child("Child", 10);
 console.log(child.name); // 输出：Child
 ```
 
-4. 原型式继承。
+4.原型式继承。
 
 主要是借助 Object.create()，以一个现有对象作为原型，创建一个新对象。缺点很明显，`Object.create`是浅拷贝，多个实例的引用类型是共享的，存在副作用。
 
@@ -138,7 +138,7 @@ console.log(c4.age); // 25
 console.log(c4.getName()); // oliva
 ```
 
-5. 寄生式继承。
+5.寄生式继承。
 
 在原型式的基础上进行增强，可以添加额外的方法，但依旧存在改变原型式继承的缺点。
 
@@ -164,7 +164,7 @@ console.log(c5.getName()); // lee
 console.log(c5.getAge()); // 25
 ```
 
-6. 寄生组合式继承。
+6.寄生组合式继承。
 
 借助`Object.create`方法在前面五种方法上优化，是最优的继承解决方式。
 
@@ -571,6 +571,7 @@ class Person {
   }
 }
 ```
+
 转写后：
 
 ```js
@@ -602,5 +603,3 @@ Object.defineProperty(Person.prototype, "sayHi", {
 如果直接在函数的原型上定义方法，会被`for...in`遍历到，而`class`中的方法是不可枚举的。
 
 :::
-
-

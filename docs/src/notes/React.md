@@ -125,7 +125,7 @@ VDOM 更新 -> `useLayoutEffect` -> DOM 更新
 
 React 执行流程：JSX -> `React.createElement()` -> Fiber Node -> DOM render
 
-**什么是 fiber?**
+1.**什么是 fiber?**
 
 我们编写的 JSX 代码会被 React 在底层使用`createElement`转换为 JS 对象，这个对象就是虚拟 DOM，16.8 后 React 实现了一套新的调度算法，使用到的结构就是 fiber 树（类似于虚拟 DOM 树，但同时也就有链表的结构），Fiber 树也是用来描述 DOM 结构的，它的每个节点就是 Fiber Node，代表了一个工作单元，包含了组件相关的信息，同时它还是 React 调度和更新机制的核心组成。
 
@@ -177,11 +177,11 @@ function FiberNode(
 }
 ```
 
-**为什么需要 Fiber?**
+2.**为什么需要 Fiber?**
 
 16.8 版本之前的 React 使用递归的方式处理组件树更新（堆栈调和 Stack Reconciliation），这种方式一旦开始就无法中断，直到整个组件树被遍历完。在处理复杂结构和海量数据的情况下可能会导致主线程被阻塞，使得应用无法及时响应用户的交互或者其他高优先级的任务。而 Fiber 树则同时具有链表结构，React 在处理每一个 Fiber 节点时都会判断是否有足够的时间完成这个节点的工作，并在必要时中断和恢复。
 
-**Fiber 工作原理**
+3.**Fiber 工作原理**
 
 借由 Fiber Node 的结构可以看出，整个 Fiber 树实际上是一个链表树，既有链接属性，又有树的结构。得益于这样的特性，使得 React 在遍历整棵 Fiber 树时可以知道从哪里开始，哪里停止，又在哪里继续，这就是 Fiber 树可以中断和恢复的前提条件。其中的`memoizedProps`、`pendingProps` 和 `memoizedState` 字段让 React 知道组件的上一个状态和即将应用的状态。通过比较这些值，React 可以决定组件是否需要更新，从而避免不必要的渲染，提高性能。`flags` 和 `subtreeFlags` 字段标识 Fiber 及其子树中需要执行的副作用，例如 DOM 更新、生命周期方法调用等。React 会积累这些副作用，然后在 Commit 阶段一次性执行，从而提高效率。
 
@@ -189,7 +189,7 @@ function FiberNode(
 
 ![fiber_tree_double_cache](../assets/fiber_tree_double_cache.png)
 
-**Fiber 的工作流程**
+4.**Fiber 的工作流程**
 
 两个阶段，调和(Reconciliation)阶段和提交(Commit)阶段。
 
@@ -335,7 +335,7 @@ setState((prev) => [...prev, "user1"]); // prev is []
 setState((prev) => [...prev, "user2"]); // prev is ['user1']
 ```
 
-2. 避免状态更新问题。在对相同状态进行多次更新时，`setState`会在内部将这些更新合并为一个，这就是批处理。如果多次调用`setState`时传入对象，后续的调用可能会出现覆盖前面的调用，从而导致状态更新不符合预期。
+2.避免状态更新问题。在对相同状态进行多次更新时，`setState`会在内部将这些更新合并为一个，这就是批处理。如果多次调用`setState`时传入对象，后续的调用可能会出现覆盖前面的调用，从而导致状态更新不符合预期。
 
 ```js
 const [count, setCount] = useState(0);

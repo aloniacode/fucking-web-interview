@@ -76,9 +76,9 @@ type A = Awaited<Promise<number>>; // number
 type B = Awaited<string | Promise<number>>; // number | string
 ```
 
-13. `NoInfer<T>`: 阻止对 T 的类型推断，除此之外，它与`T`相同。`5.4`版本新增。
+13.`NoInfer<T>`: 阻止对 T 的类型推断，除此之外，它与`T`相同。`5.4`版本新增。
 
-14. `ThisParameterType<T>`: 获取函数类型`T`的`this`参数类型,如果没有`this`参数，则返回`unknown`。`3.3`版本新增。
+14.`ThisParameterType<T>`: 获取函数类型`T`的`this`参数类型,如果没有`this`参数，则返回`unknown`。`3.3`版本新增。
 
 ```ts
 function toHex(this: Number) {
@@ -90,7 +90,7 @@ function numberToString(n: ThisParameterType<typeof toHex>) {
 }
 ```
 
-15. `OmitThisParameter<T>`: 删除函数类型`T`中`this`参数的类型，如果没有显式声明`this`参数，则返回`T`。`3.3`版本新增。
+15.`OmitThisParameter<T>`: 删除函数类型`T`中`this`参数的类型，如果没有显式声明`this`参数，则返回`T`。`3.3`版本新增。
 
 ## 说说 TypeScript 中的类以及它的应用场景？
 

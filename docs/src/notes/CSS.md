@@ -57,7 +57,7 @@
 
 原因： CSS中的px和实际的物理像素是不能划等号的，浏览器中可以通过window.devicePixelRatio获取当前设备的DPR
 
-解决方案： 
+解决方案：
 
 1. 直接写0.5px。IOS需要8以上版本，安卓不兼容。
 2. 伪元素先放大后缩小。实现如问题3代码所示。
@@ -91,7 +91,7 @@ BFC是一种特殊的上下文环境。当一个元素创建BFC后，就具备�
 11. 弹性元素（display值为`flex`或`inline-flex` 元素的直接子元素），如果它们本身既不是弹性、网格也不是表格容器。
 12. 网格元素（display值为`grid`或`inline-grid` 元素的直接子元素），如果它们本身既不是弹性、网格也不是表格容器。
 13. 多列容器（column-count或column-width值不为 `auto`，且含有 `column-count: 1` 的元素）。
-14. column-span 值为` all` 的元素始终会创建一个新的格式化上下文，即使该元素没有包裹在一个多列容器中。
+14. column-span 值为`all` 的元素始终会创建一个新的格式化上下文，即使该元素没有包裹在一个多列容器中。
 
 ## 开发中BFC的应用场景？
 
@@ -131,9 +131,9 @@ CSS选择器的优先级是根据选择器的特定性（specificity）来确定
 ## @import和link标签都是加载CSS的，它们有什么区别？
 
 1. 加载CSS方式差异。@import是CSS方式，link是HTML的方式。
-1. 兼容性差异。@import是CSS2.1才有的语法，某些浏览器可能不兼容，而link标签不存在兼容性问题。
-2. 加载顺序差异。link是并行加载，在HTML解析时遇到link时不会被阻塞，而@import是串行加载，只能在CSS文件顶部使用，并且如果引用过多会导致文档样式短暂失效（FOUC）。
-3. 功能性差异。@import只能用来加载CSS，而link除了加载CSS文件外还可以定义RSS,rel连接属性等等。
+2. 兼容性差异。@import是CSS2.1才有的语法，某些浏览器可能不兼容，而link标签不存在兼容性问题。
+3. 加载顺序差异。link是并行加载，在HTML解析时遇到link时不会被阻塞，而@import是串行加载，只能在CSS文件顶部使用，并且如果引用过多会导致文档样式短暂失效（FOUC）。
+4. 功能性差异。@import只能用来加载CSS，而link除了加载CSS文件外还可以定义RSS,rel连接属性等等。
 
 总结： link优于@import
 
@@ -166,7 +166,7 @@ CSS选择器的优先级是根据选择器的特定性（specificity）来确定
 
 当对一个文档进行布局（layout）的时候，浏览器的渲染引擎会根据标准之一的 CSS 基础框盒模型（CSS basic box model），将所有元素表示为一个个矩形的盒子（box）,一个盒子由四个部分组成：content、padding、border、margin。
 
-- 标准盒子模型（W3C）: 
+- 标准盒子模型（W3C）:
 
 盒子总宽度 = width + padding + border + margin
 
