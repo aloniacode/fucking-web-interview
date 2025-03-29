@@ -3,9 +3,9 @@
 layout: home
 
 hero:
-  name: "Fuck Interview"
-  text: "前端面试八股文笔记"
-  tagline: 希望大家都能找到心仪的工作
+  name: Fuck Interview
+  text: 包含前端面试题集合，面试经验和开源推荐的个人笔记
+  tagline: 天不生我八股文，前端面试长如夜
   actions:
     - theme: brand
       text: Get Started

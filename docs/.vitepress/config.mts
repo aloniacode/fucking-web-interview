@@ -65,7 +65,7 @@ export default defineConfig({
       },
     ],
     footer: {
-      copyright: "Copyright © 2024 Chenbin Li",
+      copyright: "Made with ❤️ by Time1sMoney",
     },
     search: {
       provider: "local",
