@@ -4,10 +4,13 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
   title: "Fuck Interview",
   description: "前端面试八股文笔记",
-  head: [["link", { rel: "icon", type: "image/x-icon", href: "/favicon.png" }]],
+  head: [
+    ["link", { rel: "icon", href: "/favicon.png" }],
+    ["meta", { name: "author", content: "Time1sMoney" }],
+  ],
+  lang: "zh-CN",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    logo: "/favicon.png",
     nav: [
       { text: "", link: "/" },
       {
@@ -40,6 +43,10 @@ export default defineConfig({
             link: "/notes/场景技巧二",
           },
         ],
+      },
+      {
+        text: "JS代码手写",
+        link: "/notes/JS代码手写",
       },
       {
         text: "面经",
