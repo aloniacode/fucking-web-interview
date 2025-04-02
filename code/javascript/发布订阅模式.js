@@ -1,44 +1,56 @@
 class EventEmitter {
-    constructor() {
-        this.events = {};
+  constructor() {
+    this.events = {};
+  }
+  on(eventName, callback) {
+    if (!this.events[eventName]) {
+      this.events[eventName] = [];
     }
-    on(event, listener) {
-        if (!this.events[event]) {
-            this.events[event] = [];
-        }
-        this.events[event].push(listener);
+    this.events[eventName].push(callback);
+  }
+  emit(eventName, ...args) {
+    if (this.events[eventName]) {
+      // 支持异步回调
+      this.events[eventName].forEach(async (callback) => {
+        await callback(args);
+      });
     }
-    emit(event, ...args) {
-        if (this.events[event]) {
-            this.events[event].forEach(listener => {
-                listener(args);
-            });
-        }
+  }
+  off(eventName, callback) {
+    if (this.events[eventName]) {
+      const index = this.events[eventName].indexOf(callback);
+      if (index > -1) {
+        this.events[eventName].splice(index, 1);
+      }
     }
-    off(event, listener) {
-        if (this.events[event]) {
-            const index = this.events[event].indexOf(listener);
-            if (index > -1) {
-                this.events[event].splice(index, 1);
-            }
-        }
-    }
+  }
+  once(eventName, callback) {
+    const onceWrapper = (...args) => {
+      callback(...args);
+      this.off(eventName, onceWrapper);
+    };
+    this.on(eventName, onceWrapper);
+  }
 }
 
 const eventEmitter = new EventEmitter();
 
-function listener1(data) {
-    console.log('listener1', data[0]);
+function callback1(data) {
+  console.log("callback1", data[0]);
 }
-function listener2(data) {
-    console.log('listener2', data[0]);
+function callback2(data) {
+  console.log("callback2", data[0]);
+}
+function callback3(data) {
+  console.log("callback3", data[0]);
 }
 
-eventEmitter.on('event', listener1);
-eventEmitter.on('event', listener2);
+eventEmitter.on("event", callback1);
+eventEmitter.on("event", callback2);
+eventEmitter.once("event", callback3);
 
-eventEmitter.emit('event', 'hello'); // listener1 hello listener2 hello
+eventEmitter.emit("event", "hello"); // callback1 hello callback2 hello
 
-eventEmitter.off('event', listener1);
+eventEmitter.off("event", callback1);
 
-eventEmitter.emit('event', 'world'); // listener2 world
+eventEmitter.emit("event", "world"); // callback2 world
