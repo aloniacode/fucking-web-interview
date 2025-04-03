@@ -209,9 +209,8 @@ console.log(c6.play); // [1,2,3]
 ```js
 function debounce(func, wait) {
   let timeout;
-  return function () {
-    let context = this; // 保存this指向
-    let args = arguments; // 拿到event对象
+  return function (...args) {
+    const context = this; // 保存this指向
     clearTimeout(timeout);
     timeout = setTimeout(function () {
       func.apply(context, args);
@@ -225,12 +224,11 @@ function debounce(func, wait) {
 ```js
 function debounce(func, wait, immediate) {
   let timeout;
-  return function () {
-    let context = this;
-    let args = arguments;
+  return function (...args) {
+    const context = this;
     if (timeout) clearTimeout(timeout); // timeout 不为null
     if (immediate) {
-      let callNow = !timeout; // 第一次会立即执行，以后只有事件执行后才会再次触发
+      const callNow = !timeout; // 第一次会立即执行，以后只有事件执行后才会再次触发
       timeout = setTimeout(function () {
         timeout = null;
       }, wait);
@@ -250,9 +248,9 @@ function debounce(func, wait, immediate) {
 
 ```js
 function throttled(fn, delay = 500) {
-  let oldtime = Date.now();
+  const oldtime = Date.now();
   return function (...args) {
-    let newtime = Date.now();
+    const newtime = Date.now();
     if (newtime - oldtime >= delay) {
       fn.apply(null, args);
       oldtime = Date.now();
@@ -282,12 +280,11 @@ function throttled(fn, delay = 500) {
 ```js
 function throttled(fn, delay) {
   let timer = null;
-  let starttime = Date.now();
-  return function () {
-    let curTime = Date.now(); // 当前时间
-    let remaining = delay - (curTime - starttime); // 从上一次到现在，还剩下多少多余时间
-    let context = this;
-    let args = arguments;
+  const starttime = Date.now();
+  return function (...args) {
+    const curTime = Date.now(); // 当前时间
+    const remaining = delay - (curTime - starttime); // 从上一次到现在，还剩下多少多余时间
+    const context = this;
     clearTimeout(timer);
     if (remaining <= 0) {
       fn.apply(context, args);
