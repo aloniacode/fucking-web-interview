@@ -322,7 +322,248 @@ function isEqual(a, b) {
 
 ## 9.分别实现`bind()`、`call()`、`apply()`方法
 
+::: code-group
+
+```js [call()]
+// call 会以给定的this值和多个参数来立即调用函数
+Function.prototype.call = function (context, ...args) {
+  // 非严格模式下null和undefined会被转换成全局对象
+  context = context || window;
+  // 将当前函数上下文对象this作为context的一个属性，使用Symbol避免冲突
+  const fn = Symbol("fn");
+  context[fn] = this;
+  // 调用函数
+  const result = context[fn](...args);
+  // 删除临时属性
+  delete context[fn];
+  return result;
+};
+```
+
+```js [apply]
+// apply和call类似，区别在于参数以数组的形式传入
+Function.prototype.apply = function (context, args) {
+  if (!Array.isArray(args)) {
+    throw new TypeError("参数必须为数组");
+  }
+  // 非严格模式下null和undefined会被转换成全局对象
+  context = context || window;
+  // 将当前函数上下文对象this作为context的一个属性，使用Symbol避免冲突
+  const fn = Symbol("fn");
+  context[fn] = this;
+  // 调用函数
+  const result = args ? context[fn](...args) : context[fn]();
+  // 删除临时属性
+  delete context[fn];
+  return result;
+};
+```
+
+```js [bind]
+// bind和call/apply不同，它不立即执行函数，而是返回一个绑定了this的新函数
+// 接受一个this指向对象和多个用于插入到绑定函数的参数
+Function.prototype.bind = function (context, ...args) {
+  const originalFn = this;
+  return function (...callArgs) {
+    // 如果是作为构造函数调用，则忽略绑定的this
+    if (new.target) {
+      return new originalFn(...args, ...callArgs);
+    }
+    // 以下逻辑可以使用call代替
+    // 非严格模式下null和undefined会被转换成全局对象
+    context = context || window;
+    // 使用绑定的this
+    const fn = Symbol("fn");
+    context[fn] = originalFn;
+    const result = args
+      ? context[fn](...args, ...callArgs)
+      : context[fn](...callArgs);
+    // 删除临时属性
+    delete context[fn];
+    return result;
+  };
+};
+```
+
+:::
+
 ## 10.实现一个 Promise
+
+实现要点如下：
+
+- 状态管理：Promise 有三种状态：pending、fulfilled 和 rejected，状态一旦改变就不能再变。
+
+- 异步处理：通过 setTimeout 确保 then 回调总是异步执行。
+
+- 链式调用：then 方法返回一个新的 Promise，实现链式调用。
+
+- 值穿透：当 then 的参数不是函数时，实现值穿透。
+
+- Promise 解析过程：resolvePromise 方法实现了 Promise/A+ 规范的解析过程，处理 thenable 对象和循环引用等情况。
+
+- 静态方法：实现了 resolve、reject、all 和 race 等静态方法。
+
+```js
+class MyPromise {
+  constructor(executor) {
+    this.status = "pending";
+    this.value = undefined;
+    this.reason = undefined;
+    this.onFulfilledCallbacks = [];
+    this.onRejectedCallbacks = [];
+
+    const resolve = (value) => {
+      if (this.status === "pending") {
+        this.status = "fulfilled";
+        this.value = value;
+        this.onFulfilledCallbacks.forEach((cb) => cb(value));
+      }
+    };
+    const reject = (reason) => {
+      if (this.status === "pending") {
+        this.status = "rejected";
+        this.reason = reason;
+        this.onRejectedCallbacks.forEach((cb) => cb(reason));
+      }
+    };
+
+    try {
+      executor(resolve, reject);
+    } catch (error) {
+      reject(error);
+    }
+  }
+
+  then(onFullfilled, onRejected) {
+    onFullfilled =
+      typeof onFullfilled === "function" ? onFullfilled : (value) => value;
+    onRejected =
+      typeof onRejected === "function"
+        ? onRejected
+        : (reason) => {
+            throw reason;
+          };
+
+    const promise2 = new MyPromise((resolve, reject) => {
+      const handleFulfilled = () => {
+        setTimeout(() => {
+          try {
+            const r = onFullfilled(this.value);
+            this.resolvePromise(promise2, r, resolve, reject);
+          } catch (error) {
+            reject(error);
+          }
+        }, 0);
+      };
+      const handleRejected = () => {
+        setTimeout(() => {
+          try {
+            const r = onRejected(this.reason);
+            this.resolvePromise(promise2, r, resolve, reject);
+          } catch (error) {
+            reject(error);
+          }
+        }, 0);
+      };
+
+      if (this.status === "fulfilled") {
+        handleFulfilled();
+      } else if (this.status === "rejected") {
+        handleRejected();
+      } else {
+        this.onFulfilledCallbacks.push(handleFulfilled);
+        this.onRejectedCallbacks.push(handleRejected);
+      }
+    });
+
+    return promise2;
+  }
+  catch(onRejected) {
+    return this.then(null, onRejected);
+  }
+  finally(onFinally) {
+    return this.then(
+      (value) => MyPromise.resolve(onFinally()).then(() => value),
+      (reason) =>
+        MyPromise.resolve(onFinally()).then(() => {
+          throw reason;
+        })
+    );
+  }
+
+  resolvePromise(promise, x, resolve, reject) {
+    if (promise === x) {
+      return reject(new TypeError("Chaining cycle detected for promise"));
+    }
+    let called = false;
+    if (x !== null && (typeof x === "object" || typeof x === "function")) {
+      try {
+        const then = x.then;
+        if (typeof then === "function") {
+          then.call(
+            x,
+            (y) => {
+              if (called) return;
+              called = true;
+              this.resolvePromise(promise, y, resolve, reject);
+            },
+            (r) => {
+              if (called) return;
+              called = true;
+              reject(r);
+            }
+          );
+        } else {
+          resolve(x);
+        }
+      } catch (error) {
+        if (called) return;
+        called = true;
+        reject(error);
+      }
+    } else {
+      resolve(x);
+    }
+  }
+  static resolve(value) {
+    if (value instanceof MyPromise) {
+      return value;
+    }
+    return new MyPromise((resolve) => resolve(value));
+  }
+
+  static reject(reason) {
+    return new MyPromise((_resolve, reject) => reject(reason));
+  }
+
+  static all(promises) {
+    return new MyPromise((resolve, reject) => {
+      const result = [];
+      let count = 0;
+      for (let i = 0; i < promises.length; i++) {
+        promises[i].then((value) => {
+          result[i] = value;
+          count++;
+          if (count === promises.length) {
+            resolve(result);
+          }
+        }, reject);
+      }
+    });
+  }
+
+  static race(promises) {
+    return new MyPromise((resolve, reject) => {
+      if (promises.length === 0) {
+        return;
+      }
+      promises.forEach((promise) =>
+        MyPromise.resolve(promise).then(resolve, reject)
+      );
+    });
+  }
+}
+```
 
 ## 11.实现`Promise.all()`方法
 
