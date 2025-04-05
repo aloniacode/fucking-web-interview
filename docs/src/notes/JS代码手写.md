@@ -387,7 +387,7 @@ Function.prototype.bind = function (context, ...args) {
 
 :::
 
-## 10.实现一个 Promise
+## 10.实现 Promise，并实现它的静态方法`resolve()`、`reject()`、`all()`、`race()`、`allSettled()`、`withResolver()`
 
 实现要点如下：
 
@@ -562,22 +562,213 @@ class MyPromise {
       );
     });
   }
+
+  static allSettled(promises) {
+    return new MyPromise((resolve) => {
+      const result = [];
+      let count = 0;
+      for (let i = 0; i < promises.length; i++) {
+        promises[i]
+          .then((value) => {
+            result[i] = { status: "fulfilled", value };
+            count++;
+            if (count === promises.length) {
+              resolve(result);
+            }
+          })
+          .catch((reason) => {
+            result[i] = { status: "rejected", reason };
+            count++;
+            if (count === promises.length) {
+              resolve(result);
+            }
+          });
+      }
+    });
+  }
+  // ES2024（ES14）引入
+  static withResolver() {
+    let resolve, reject;
+    const promise = new MyPromise((_resolve, _reject) => {
+      resolve = _resolve;
+      reject = _reject;
+    });
+    return { promise, resolve, reject };
+  }
 }
 ```
 
-## 11.实现`Promise.all()`方法
+## 11.实现柯里化函数`curry()`
 
-## 12.实现`Promise.race()`方法
+::: code-group
 
-## 13.实现`Promise.allSettled()`方法
+```js [基础版]
+// 基础版本，没有考虑占位符的情况
+function baseCurry(fn) {
+  return function curriedFn(...args) {
+    if (args.length >= fn.length) {
+      return fn.apply(this, args);
+    }
+    return function (...nextArgs) {
+      return curriedFn.apply(this, args.concat(nextArgs));
+    };
+  };
+}
+```
 
-## 14.实现柯里化函数`curry()`
+```js [进阶版]
+// 进阶版本，考虑占位符的情况
+function advancedCurry(fn) {
+  return function curriedFn(...args) {
+    if (args.length >= fn.length && !args.includes(advancedCurry._)) {
+      return fn.apply(this, args);
+    }
+    return function (...nextArgs) {
+      const mergedArgs = args.map((arg) =>
+        arg === advancedCurry._ && nextArgs.length ? nextArgs.shift() : arg
+      );
+      return curriedFn.apply(this, mergedArgs.concat(nextArgs));
+    };
+  };
+}
+// 定义占位符
+advancedCurry._ = Symbol("_");
+```
 
-## 15.实现`compose()`函数
+:::
 
-## 16.实现 LRU 缓存算法
+## 12.实现`compose()`函数
 
-## 17.实现红绿灯
+compose 是函数式编程中的一个重要概念，它将多个函数组合成一个函数，从右到左执行。与 pipe 相反。
+
+可将以下代码将`reduceRight()`替换为`reduce()`，实现从左到右执行的 pipe function。
+
+```js
+// 基础版
+function compose(...fns) {
+  if (fns.length === 0) return (arg) => arg;
+  if (fns.length === 1) return fns[0];
+  return fns.reduceRight(
+    (acc, f) =>
+      (...args) =>
+        f(acc(...args))
+  );
+}
+
+// 支持异步函数
+function compose2(...fns) {
+  if (fns.length === 0) return (arg) => arg;
+  if (fns.length === 1) return fns[0];
+  return fns.reduceRight(
+    (acc, f) =>
+      async (...args) =>
+        await f(await acc(...args))
+  );
+}
+```
+
+## 13.实现 LRU 缓存算法
+
+::: code-group
+
+```js [仅使用Map实现]
+// 依赖Map的插入顺序，无法严格保证LRU
+class SimpleLRU {
+  constructor(capacity) {
+    this.capacity = capacity;
+    this.cache = new Map();
+  }
+  get(key) {
+    if (!this.cache.has(key)) return -1;
+    const value = this.cache.get(key);
+    this.cache.delete(key);
+    this.cache.set(key, value);
+    return value;
+  }
+  put(key, value) {
+    if (this.cache.has(key)) {
+      this.cache.delete(key);
+    }
+    if (this.cache.size === this.capacity) {
+      this.cache.delete(this.cache.keys().next().value); // 获取第一个键的值，即最久未用
+    }
+  }
+}
+```
+
+```js [使用双向链表+Map实现]
+class ListNode {
+  constructor(key = 0, value = 0) {
+    this.key = key; // 用于哈希表快速查找
+    this.value = value;
+    this.prev = null; // 前驱节点
+    this.next = null; // 后继节点
+  }
+}
+
+class LRUCache {
+  constructor(capacity) {
+    this.map = new Map(); // 哈希表，用于快速查找节点
+    this.capacity = capacity; // 缓存容量
+    this.head = new ListNode(); // 虚拟头节点
+    this.tail = new ListNode(); // 虚拟尾节点
+    // 初始化链表
+    this.head.next = this.tail;
+    this.tail.prev = this.head;
+  }
+
+  // 获取缓存值,访问后将节点移到链表头部
+  get(key) {
+    if (!this.map.has(key)) return -1;
+    const node = this.map.get(key);
+    this._moveToHead(node);
+    return node.value;
+  }
+  // 设置缓存值,如果缓存已满,则淘汰最久未使用节点
+  put(key, value) {
+    if (this.map.has(key)) {
+      const node = this.map.get(key);
+      node.value = value; // 更新节点值
+      this._moveToHead(node); // 移动节点到头部
+    } else {
+      // 判断缓存是否已满
+      if (this.map.size === this.capacity) {
+        this._removeTail(); // 缓存已满,淘汰最久未使用节点
+      }
+      const node = new ListNode(key, value); // 创建新节点
+      this.map.set(key, node); // 加入哈希表
+      this._addToHead(node); // 加入链表头部
+    }
+  }
+  // 私有方法，将节点移动到链表头部
+  _moveToHead(node) {
+    this._removeNode(node);
+    this._addToHead(node);
+  }
+  // 私有方法，将节点从链表中移除
+  _removeNode(node) {
+    node.prev.next = node.next;
+    node.next.prev = node.prev;
+  }
+  // 私有方法，将节点加入链表头部
+  _addToHead(node) {
+    node.prev = this.head;
+    node.next = this.head.next;
+    this.head.next.prev = node;
+    this.head.next = node;
+  }
+  // 私有方法，移除链表尾部节点，淘汰最久未使用
+  _removeTail() {
+    const node = this.tail.prev;
+    this._removeNode(node);
+    this.map.delete(node.key);
+  }
+}
+```
+
+:::
+
+## 14.实现红绿灯
 
 ```js
 function red() {
@@ -612,3 +803,49 @@ run();
 ```
 
 ## 18.实现一个方法`parseURL`处理 url 参数
+
+::: code-group
+
+```js [使用URL()]
+// 现代浏览器环境下推荐使用该方式进行处理
+function parseURL(url) {
+  const urlObj = new URL(url);
+  const params = {};
+
+  urlObj.searchParams.forEach((value, key) => {
+    params[key] = value;
+  });
+
+  return params;
+}
+```
+
+```js [手动解析]
+// 如果要兼容旧环境，可以使用手动解析的方式
+function parseURL(url) {
+  const params = {};
+  const queryString = url.split("?")[1];
+  if (queryString) {
+    const pairs = queryString.split("&");
+    for (const pair of pairs) {
+      const [key, value] = pair.split("=");
+      // 处理特殊字符
+      const decodedKey = decodeURIComponent(key);
+      const decodedValue = decodeURIComponent(value);
+      // 如果不需要支持重复键的话则可以在处理特殊字符后直接设置值
+      if (params[decodedKey]) {
+        if (Array.isArray(params[decodedKey])) {
+          params[decodedKey].push(decodedValue);
+        } else {
+          params[decodedKey] = [params[decodedKey], decodedValue];
+        }
+      } else {
+        params[decodedKey] = decodedValue;
+      }
+    }
+  }
+  return params;
+}
+```
+
+:::

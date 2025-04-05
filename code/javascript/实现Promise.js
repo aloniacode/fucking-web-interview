@@ -156,11 +156,56 @@ class MyPromise {
       );
     });
   }
+
+  static allSettled(promises) {
+    return new MyPromise((resolve) => {
+      const result = [];
+      let count = 0;
+      for (let i = 0; i < promises.length; i++) {
+        promises[i]
+          .then((value) => {
+            result[i] = { status: "fulfilled", value };
+            count++;
+            if (count === promises.length) {
+              resolve(result);
+            }
+          })
+          .catch((reason) => {
+            result[i] = { status: "rejected", reason };
+            count++;
+            if (count === promises.length) {
+              resolve(result);
+            }
+          });
+      }
+    });
+  }
+  // ES2024（ES14）引入
+  static withResolver() {
+    let resolve, reject;
+    const promise = new MyPromise((_resolve, _reject) => {
+      resolve = _resolve;
+      reject = _reject;
+    });
+    return { promise, resolve, reject };
+  }
 }
 
 const p1 = new MyPromise((resolve) => {
   setTimeout(() => {
-    resolve("hello");
+    resolve("promise 1");
   }, 1000);
 });
+const p2 = new MyPromise((resolve) => {
+  setTimeout(() => {
+    resolve("promise 2");
+  }, 2000);
+});
+const p3 = new MyPromise((resolve) => {
+  setTimeout(() => {
+    resolve("promise 3");
+  }, 3000);
+});
 p1.then((res) => console.log(res)).then(8);
+
+MyPromise.race([p1, p2, p3]).then((res) => console.log(res));
