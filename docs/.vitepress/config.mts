@@ -49,6 +49,15 @@ export default defineConfig({
         link: "/notes/JS代码手写",
       },
       {
+        text: "最佳实践",
+        items: [
+          {
+            text: "React最佳实践",
+            link: "/notes/React最佳实践",
+          },
+        ],
+      },
+      {
         text: "面经",
         items: [
           { text: "2024.3.22", link: "/interviews/2024.3.22" },
