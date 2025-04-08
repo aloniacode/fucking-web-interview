@@ -1,3 +1,7 @@
+<script setup>
+import Tag from '../components/Tag.vue'
+</script>
+
 # React
 
 ## React 合成事件和原生事件的区别？
@@ -16,11 +20,140 @@
 4. 优化，利用事件委托都将事件代理到 document/root element，减少内存开销。
 5. 干预事件的分发，依托 fiber 架构可以干预事件的分发来提升用户体验。
 
-## 为什么使用 Hooks?/Hook 的作用时什么？
+## React 的组件生命周期有哪些？
 
-1. 复杂组件的逻辑便于抽离。
-2. 复用逻辑。
-3. class 组件的 this 不易理解，给使用者造成额外的心智负担。
+- 挂载阶段：组件首次被创建挂载到 DOM 中。
+
+- 更新阶段：组件的 props 或 state 发生变化时触发重新渲染。
+
+- 卸载阶段：组件从 DOM 中移除。
+
+函数组件中没有生命周期的概念，只有类组件才有生命周期，但是可以通过`useEffect`模拟生命周期的行为。
+
+::: code-group
+
+```js [组件挂载阶段]
+// 类组件
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { count: 0 };
+  }
+
+  componentDidMount() {
+    console.log("组件挂载完成");
+  }
+
+  render() {
+    return <div>{this.state.count}</div>;
+  }
+}
+
+// 函数组件
+function App() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    console.log("组件挂载完成");
+  }, []);
+
+  return <div>{count}</div>;
+}
+```
+
+```js [组件更新阶段]
+// 类组件
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { count: 0 };
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log("组件更新完成");
+  }
+
+  render() {
+    return <div>{this.state.count}</div>;
+  }
+}
+
+// 函数组件
+function App() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    console.log("组件更新完成");
+  }, [count]);
+
+  return <div>{count}</div>;
+}
+```
+
+```js [组件卸载阶段]
+// 类组件
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { count: 0 };
+  }
+
+  componentWillUnmount() {
+    console.log("组件卸载完成");
+  }
+
+  render() {
+    return <div>{this.state.count}</div>;
+  }
+}
+
+// 函数组件
+function App() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    return () => {
+      console.log("组件卸载完成");
+    };
+  }, []);
+
+  return <div>{count}</div>;
+}
+```
+
+:::
+
+## 为什么使用 Hooks?Hook 的作用是什么？
+
+React Hooks 是 React 16.8 引入的重大特性，它允许函数组件使用状态（state）、生命周期等原本只有类组件才有的能力。Hooks 的出现解决了类组件的诸多痛点，并带来了更简洁、灵活的代码组织方式。以下是它的核心优势和作用：
+
+1. 更好地复用逻辑，避免像类组件中通过 HOC 或者 render props 来复用逻辑导致的“嵌套地狱”。
+
+2. 更好地组织代码逻辑，避免像类组件中在`componentDidMount`、`componentDidUpdate`、`componentWillUnmount`中分散代码。
+
+3. class 组件的 this 不易理解，需要手动绑定，给使用者造成额外的心智负担。
+
+## React内置的Hooks有哪些？
+
+- `useState`: 用于在函数组件中添加局部状态。<Tag text="常用"  />
+- `useReducer`: 用于管理复杂的状态逻辑，类似于 Redux 的 reducer。<Tag text="常用"  />
+- `useEffect`: 用于在函数组件中执行副作用操作（如数据获取、订阅、手动 DOM 操作等）。<Tag text="常用"  />
+- `useLayoutEffect`: 与 useEffect 类似，但在 DOM 更新后同步执行，适用于需要直接操作 DOM 的场景。<Tag text="常用"  />
+- `useContext`: 用于访问 React 的上下文（Context）。<Tag text="常用"  />
+- `useRef`: 用于创建一个可变的引用对象，通常用于访问 DOM 元素或存储可变值。<Tag text="常用"  />
+- `useMemo`: 用于缓存计算结果，避免在每次渲染时都重新计算。<Tag text="常用"  />
+- `useCallback`: 用于缓存回调函数，避免在每次渲染时都创建新的回调。<Tag text="常用"  />
+- `useDeferredValue`: 延迟更新 UI 的一部分。
+- `useActionState`: 根据某个表单动作的结果更新 state。
+- `useImperativeHandle`: 用于自定义暴露给父组件的值，通常与 `forwardRef` 一起使用。
+- `useDebugValue`: 允许开发者在React开发者工具中为自定义Hook添加标签。
+- `useOptimistic`: 乐观地更新用户界面。
+- `useTransition`: 用于标记某些状态更新为“过渡”状态，并在后台渲染部分UI。
+- `useId`: 用于生成唯一的 ID，可以生成传递给无障碍属性的唯一 ID。
+- `useSyncExternalStore`: 用于订阅外部存储（如 Redux 或 Zustand）的状态。
+- `useInsertionEffect`: 专为 CSS-in-JS 库的作者特意打造的，在布局副作用触发之前将元素插入到 DOM 中。
+
+详细介绍请[👉查看官方文档](https://react.dev/reference/react/hooks)
 
 ## 为什么 React 推荐只在顶层使用 Hooks？
 
@@ -80,7 +213,7 @@ Warning: React has detected a change in the order of Hooks called by App. This w
 
 :::
 
-从错误信息就可以看到，`state`的修改导致组件重新渲染，而在渲染阶段加入了新的`useEffect`, 导致`Current Tree`和`WorkInProgress Tree`的`effect`链表不一致（参考 React Diff 原理）。而如如果在组件挂载阶段就能加入 Hooks 链表并在后续的更新中不改变 Hooks 的执行顺序，则不会报错。
+从错误信息就可以看到，`state`的修改导致组件重新渲染，而在渲染阶段加入了新的`useEffect`, 导致`Current Tree`和`WorkInProgress Tree`的`effect`链表不一致（参考 React Diff 原理）。而如果在组件挂载阶段就能加入 Hooks 链表并在后续的更新中不改变 Hooks 的执行顺序，则不会报错。
 
 **总结**：只要能保证不修改 Hooks 的执行顺序，就可以在循环/条件/嵌套函数/`try`/`catch`/`finally` 等语句块中使用 Hooks，但是**非常不推荐**这样使用。
 
