@@ -17,5 +17,6 @@ const { text, textColor = '#fff', bgColor = 'oklch(0.52 0.105 223.128)' } = defi
 .container {
     padding: 2px 6px;
     border-radius: 6px;
+    font-size: 14px;
 }
 </style>
