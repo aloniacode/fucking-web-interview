@@ -267,3 +267,97 @@ class Person {
 ```
 
 应用场景：利用装饰器在不改变原有代码的前提下对类进行扩展的特性，可以便捷实现诸如日志记录，缓存，权限校验等功能，在提高重用性得同时也提高了代码的可读性和可维护性。
+
+## Type 和 Interface 的区别是什么？如何选择？
+
+**共同点**：
+
+1.都可以描述对象结构。
+
+```ts
+type Point = {
+  x: number;
+  y: number;
+};
+interface Point {
+  x: number;
+  y: number;
+}
+```
+
+2.都可以被扩展。
+
+```ts
+// 适用交叉类型实现扩展
+type A = {
+  a: string;
+} & {
+  b: number;
+};
+//使用extends实现扩展
+interface A {
+  a: string;
+}
+interface B extends A {
+  b: number;
+}
+```
+
+3.都可以被类实现。
+
+```ts
+type A = {
+  a: string;
+};
+interface B {
+  b: number;
+}
+class C implements A {
+  a = "a";
+}
+class D implements B {
+  b = 1;
+}
+```
+
+**不同点**：
+
+1.`type`可以描述基础类型，`interface`只能是对象类型。
+
+2.`type`可以有联合和交叉类型，`interface`无法实现。
+
+3.`type`可以被`typeof`赋值。
+
+4.`type`可以更容易地标识元组类型。
+
+```ts
+type Point = [number, number];
+```
+
+5.`interface`支持声明合并，`type`不行。
+
+```ts
+interface A {
+  a: string;
+}
+interface A {
+  b: number;
+}
+// 等同于
+interface A {
+  a: string;
+  b: number;
+}
+
+type B = {
+  b: string;
+};
+// Error: Duplicate identifier
+type B = {
+  bb: number;
+};
+```
+
+::: info 如何选择
+对象尽量使用`interface`声明类型，如有其他特殊需要（例如联合类型和元组类型等），则使用`type`声明。
+:::
