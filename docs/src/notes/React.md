@@ -133,7 +133,9 @@ React Hooks 是 React 16.8 引入的重大特性，它允许函数组件使用�
 
 3. class 组件的 this 不易理解，需要手动绑定，给使用者造成额外的心智负担。
 
-## React内置的Hooks有哪些？
+## React 内置的 Hooks 有哪些？
+
+16.8 版本引入的 hooks:
 
 - `useState`: 用于在函数组件中添加局部状态。<Tag text="常用"  />
 - `useReducer`: 用于管理复杂的状态逻辑，类似于 Redux 的 reducer。<Tag text="常用"  />
@@ -143,17 +145,23 @@ React Hooks 是 React 16.8 引入的重大特性，它允许函数组件使用�
 - `useRef`: 用于创建一个可变的引用对象，通常用于访问 DOM 元素或存储可变值。<Tag text="常用"  />
 - `useMemo`: 用于缓存计算结果，避免在每次渲染时都重新计算。<Tag text="常用"  />
 - `useCallback`: 用于缓存回调函数，避免在每次渲染时都创建新的回调。<Tag text="常用"  />
-- `useDeferredValue`: 延迟更新 UI 的一部分。
-- `useActionState`: 根据某个表单动作的结果更新 state。
 - `useImperativeHandle`: 用于自定义暴露给父组件的值，通常与 `forwardRef` 一起使用。
-- `useDebugValue`: 允许开发者在React开发者工具中为自定义Hook添加标签。
-- `useOptimistic`: 乐观地更新用户界面。
-- `useTransition`: 用于标记某些状态更新为“过渡”状态，并在后台渲染部分UI。
+
+18 版本新引入的 hooks:
+
+- `useDeferredValue`: 延迟更新 UI 的一部分。
+- `useTransition`: 用于标记某些状态更新为“过渡”状态，并在后台渲染部分 UI。
 - `useId`: 用于生成唯一的 ID，可以生成传递给无障碍属性的唯一 ID。
 - `useSyncExternalStore`: 用于订阅外部存储（如 Redux 或 Zustand）的状态。
 - `useInsertionEffect`: 专为 CSS-in-JS 库的作者特意打造的，在布局副作用触发之前将元素插入到 DOM 中。
+- `useDebugValue`: 允许开发者在 React 开发者工具中为自定义 Hook 添加标签。
 
-详细介绍请[👉查看官方文档](https://react.dev/reference/react/hooks)
+19 版本新引入的 hooks:
+
+- `useOptimistic`: 乐观地更新用户界面。<Tag text="v19" />
+- `useFormStatus`: 根据某个表单动作的结果更新 state。
+
+详细介绍请[👉 查看官方文档](https://react.dev/reference/react/hooks)
 
 ## 为什么 React 推荐只在顶层使用 Hooks？
 
@@ -240,6 +248,7 @@ useEffect(() => {
 `useLayoutEffect`的用法和`useEffect`一样，但是它们的 setup 回调执行的时机不同：
 
 VDOM 更新 -> DOM 更新 -> `useEffect`
+
 VDOM 更新 -> `useLayoutEffect` -> DOM 更新
 
 **useEffect**的使用场景：
@@ -332,7 +341,7 @@ function FiberNode(
 
 ## setState 的原理和机制？它为什么是异步的？
 
-React18 中 setState 默认是**异步/批量**的，18 版本以前在原生 DOM 事件回调中和 setTimeout/promise 回调中 setState 是同步执行的，即可以在执行 setState 后立即拿到最新值，而在 React 合成事件和生命周期中是异步执行的。
+React 18版本中 `setState` 默认是**异步/批量**的，18版本以前在原生 DOM 事件回调中和 `setTimeout`/`promise` 回调中 `setState` 是同步执行的，即可以在执行 `setState` 后立即拿到最新值，而在 React 合成事件和生命周期中是异步执行的。
 
 异步：setState 后面代码无法在 setState 后立即拿到最新的 state，它表现得像异步执行，**实际上不是传统意义上的异步执行（setTimeout/Promise）**。
 
@@ -353,7 +362,9 @@ React18 中 setState 默认是**异步/批量**的，18 版本以前在原生 DO
 
 ## setState 批量更新是如何实现的？
 
-React 中的 `setState` 批量更新是通过 `enqueueSetState` 函数实现的。当在组件中多次调用`setState`时，React 并不会立即更新组件的状态，而是将状态更新请求添加到一个队列中，然后在合适的时机批量处理这些更新请求。
+React 中 `setState` 的批量更新特性核心是通过**React Scheduler**来实现的，具体处理逻辑在 `enqueueSetState` 函数中。
+
+当在组件中多次调用`setState`时，React 并不会立即更新组件的状态，而是通过**React Scheduler**将状态更新请求添加到一个队列中，然后在合适的时机(一般是JS运行栈清空，事件循环即将开始下一轮时)处理队列中的更新请求。
 
 ```ts
 function batchedUpdates<A, R>(fn: (a: A) => R, a: A): R {
@@ -529,3 +540,19 @@ React 中的代码层面的性能优化无非就是围绕**减少重新渲染，
 6. 避免使用内联函数，因为内联函数在每次渲染时都会重新创建，造成性能损耗。
 
 7. 合理使用`useEffect`，避免在一个组件内使用过多的副作用（组件细粒度拆分），这不仅不利于维护，还可能导致组件的无限循环渲染。如果在`useEffect`的 setup 回调中使用了外部订阅和定时器，请在 cleanup 回调中取消订阅和移除定时器，避免造成内存泄漏。
+
+## React19带来了哪些新特性？
+
+1. 新的Hooks：`useActionState`,`useOptimistic`,`useFormStatus`。
+
+2. 新的API： `use`。
+
+3. 服务端组件可以提前渲染，与服务端Actions配对后，客户端组件可以无缝调用异步的服务端函数。
+
+4. ref作为props对象的属性在函数组件中被使用，新的函数组件不再需要使用`forwardRef`。
+
+5. 改进了水合错误的报告。
+
+6. 直接使用Context作为Provider，而不再需要使用`Context.Provider`。
+
+👉具体更新以及其他更改请查看官方Blog：[React v19](https://zh-hans.react.dev/blog/2024/12/05/react-19)
