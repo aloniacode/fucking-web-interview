@@ -1,5 +1,5 @@
 import { defineConfig } from "vitepress";
-
+import llmstxt from "vitepress-plugin-llms";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "Fuck Interview",
@@ -90,6 +90,7 @@ export default defineConfig({
   srcDir: "src",
   lastUpdated: true,
   vite: {
+    plugins: [llmstxt()],
     server: {
       open: false,
     },
