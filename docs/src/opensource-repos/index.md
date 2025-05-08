@@ -32,6 +32,7 @@ import Tag from '../components/Tag.vue'
 | :---: | --- |
 | [TanStack Query](https://github.com/TanStack/query) | 以 Hooks 的形式进行数据请求、缓存和异步更新。|
 | [Ky](https://github.com/sindresorhus/ky) | 基于 fetch 的 HTTP 客户端库，轻量且优雅。|
+| [Alova](https://github.com/alovajs/alova) | 一个流程简化的下一代请求工具。 |
 
 ## 数据验证
 
