@@ -1,10 +1,11 @@
-import type { Theme } from 'vitepress'
-import DefaultTheme from 'vitepress/theme'
-
+import type { Theme } from "vitepress";
+import catppuccinTheme from "./catppuccin.theme";
+import Layout from "./Layout.vue";
 export default {
-  extends: DefaultTheme,
+  extends: catppuccinTheme,
   enhanceApp({ app }) {
     // 注册自定义全局组件
-    app.component('Tag')
-  }
-} satisfies Theme
+    app.component("Tag");
+  },
+  Layout: Layout,
+} as Theme;
