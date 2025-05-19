@@ -8,6 +8,65 @@ export default defineConfig({
   head: [
     ["link", { rel: "icon", href: "/favicon.png" }],
     ["meta", { name: "author", content: "Time1sMoney" }],
+    // SEO
+    [
+      "meta",
+      {
+        name: "description",
+        content: "一个包含前端面试题集合，面试经验和开源推荐的个人笔记",
+      },
+    ],
+    [
+      "meta",
+      {
+        name: "keywords",
+        content:
+          "前端面试, 面试八股文, 前端面试笔记, 前端面试经验,Fuck Interview,React,Vue,TypeScript,NodeJS,Git,计算机网络,浏览器,数据结构和算法,设计模式,场景技巧,JS代码手写,最佳实践,面经,开源仓库",
+      },
+    ],
+    // Open Graph
+    ["meta", { property: "og:type", content: "website" }],
+    [
+      "meta",
+      { property: "og:title", content: "Fuck Interview - 前端面试八股文笔记" },
+    ],
+    [
+      "meta",
+      {
+        property: "og:description",
+        content: "一个包含前端面试题集合，面试经验和开源推荐的个人笔记",
+      },
+    ],
+    [
+      "meta",
+      {
+        property: "og:image",
+        content:
+          "https://github.com/Time1sMoney/fuck-interview/blob/master/images/homepage.png",
+      },
+    ],
+    ["meta", { property: "og:url", content: "https://fkdoc.top/ " }],
+    // Twitter Card
+    ["meta", { name: "twitter:card", content: "summary_large_image" }],
+    [
+      "meta",
+      { name: "twitter:title", content: "Fuck Interview - 前端面试八股文笔记" },
+    ],
+    [
+      "meta",
+      {
+        name: "twitter:description",
+        content: "一个包含前端面试题集合，面试经验和开源推荐的个人笔记",
+      },
+    ],
+    [
+      "meta",
+      {
+        name: "twitter:image",
+        content:
+          "https://github.com/Time1sMoney/fuck-interview/blob/master/images/homepage.png",
+      },
+    ],
   ],
   lang: "zh-CN",
   themeConfig: {
