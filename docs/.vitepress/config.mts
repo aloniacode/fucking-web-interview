@@ -1,4 +1,5 @@
 import { defineConfig } from "vitepress";
+import { La51Plugin } from "vitepress-plugin-51la";
 import llmstxt from "vitepress-plugin-llms";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -86,11 +87,22 @@ export default defineConfig({
     search: {
       provider: "local",
     },
+    returnToTopLabel: "返回顶部",
+    sidebarMenuLabel: "菜单",
+    darkModeSwitchLabel: "主题",
+    lightModeSwitchTitle: "切换到浅色模式",
+    darkModeSwitchTitle: "切换到深色模式",
   },
   srcDir: "src",
   lastUpdated: true,
   vite: {
-    plugins: [llmstxt()],
+    plugins: [
+      llmstxt(),
+      La51Plugin({
+        id: "3MDxgRUArdusBKBq",
+        ck: "3MDxgRUArdusBKBq",
+      }),
+    ],
     server: {
       open: false,
     },

@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@catppuccin/vitepress": "^0.1.2",
+    "vitepress-plugin-51la": "^0.1.0",
     "vue": "^3.5.14"
   }
 }
