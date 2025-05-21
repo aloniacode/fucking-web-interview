@@ -3,17 +3,16 @@
 layout: home
 
 hero:
-  name: Fuck Interview
-  text: 包含前端面试题集合，面试经验和开源推荐的个人笔记
-  tagline: 天不生我八股文，前端面试长如夜
+  name: Fucking Web Interview
+  text: 一个开源文档网站，包含前端面试题，面试经验和开源推荐。
+  tagline: 学习，永无止境。
   actions:
     - theme: brand
-      text: Get Started
+      text: Let's Go
       link: /notes/HTML
 
 features:
   - title: 学习 Learning
-  - title: 思考 Thinking 
+  - title: 思考 Thinking
   - title: 实践 Practice
 ---
-

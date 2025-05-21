@@ -3,8 +3,8 @@ import { La51Plugin } from "vitepress-plugin-51la";
 import llmstxt from "vitepress-plugin-llms";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Fuck Interview",
-  description: "前端面试八股文笔记",
+  title: "Fucking Web Interview",
+  description: "一个开源文档网站，包含前端面试题，面试经验和开源推荐",
   head: [
     ["link", { rel: "icon", href: "/favicon.png" }],
     ["meta", { name: "author", content: "Time1sMoney" }],
@@ -13,7 +13,7 @@ export default defineConfig({
       "meta",
       {
         name: "description",
-        content: "一个包含前端面试题集合，面试经验和开源推荐的个人笔记",
+        content: "一个开源文档网站，包含前端面试题，面试经验和开源推荐。",
       },
     ],
     [
@@ -21,20 +21,24 @@ export default defineConfig({
       {
         name: "keywords",
         content:
-          "前端面试, 面试八股文, 前端面试笔记, 前端面试经验,Fuck Interview,React,Vue,TypeScript,NodeJS,Git,计算机网络,浏览器,数据结构和算法,设计模式,场景技巧,JS代码手写,最佳实践,面经,开源仓库",
+          "前端面试, 面试八股文, 前端面试笔记, 前端面试经验,Fucking Web Interview,React,Vue,TypeScript,NodeJS,Git,计算机网络,浏览器,数据结构和算法,设计模式,场景技巧,JS代码手写,最佳实践,面经,开源仓库",
       },
     ],
     // Open Graph
     ["meta", { property: "og:type", content: "website" }],
     [
       "meta",
-      { property: "og:title", content: "Fuck Interview - 前端面试八股文笔记" },
+      {
+        property: "og:title",
+        content:
+          "Fucking Web Interview - 一个开源文档网站，包含前端面试题，面试经验和开源推荐",
+      },
     ],
     [
       "meta",
       {
         property: "og:description",
-        content: "一个包含前端面试题集合，面试经验和开源推荐的个人笔记",
+        content: "一个开源文档网站，包含前端面试题，面试经验和开源推荐",
       },
     ],
     [
@@ -42,7 +46,7 @@ export default defineConfig({
       {
         property: "og:image",
         content:
-          "https://github.com/Time1sMoney/fuck-interview/blob/master/images/homepage.png",
+          "https://github.com/Time1sMoney/fucking-web-interview/blob/master/images/homepage.png",
       },
     ],
     ["meta", { property: "og:url", content: "https://fkdoc.top/ " }],
@@ -133,7 +137,7 @@ export default defineConfig({
     socialLinks: [
       {
         icon: "github",
-        link: "https://github.com/Time1sMoney/fuck-interview",
+        link: "https://github.com/Time1sMoney/fucking-web-interview",
       },
       {
         icon: "bilibili",

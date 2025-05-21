@@ -1,8 +1,16 @@
-# Fuck Interview
+# Fucking Web Interview
 
 这个仓库用于记录我过去在面试和工作学习中遇到的问题和答案，其中也包括一些代码片段和图片，以及drawio源文件。
 
 **对于其中出现的错误，欢迎提交issues或者PR！**
+
+## Usage
+
+```shell
+
+pnpm run dev:docs
+
+```
 
 ## Content
 
