@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:docs": "vitepress dev docs",
@@ -18,6 +19,8 @@
   },
   "dependencies": {
     "@catppuccin/vitepress": "^0.1.2",
+    "dayjs": "^1.11.13",
+    "typeit": "^8.8.7",
     "vitepress-plugin-51la": "^0.1.0",
     "vue": "^3.5.14"
   }
