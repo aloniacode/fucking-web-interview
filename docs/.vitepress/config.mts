@@ -137,7 +137,7 @@ export default defineConfig({
     socialLinks: [
       {
         icon: "github",
-        link: "https://github.com/Time1sMoney/fucking-web-interview",
+        link: "https://github.com/aloniacode/fucking-web-interview",
       },
       {
         icon: "bilibili",
