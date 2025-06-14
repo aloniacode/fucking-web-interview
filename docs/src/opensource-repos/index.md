@@ -46,6 +46,17 @@ import Tag from '../components/Tag.vue'
 | 名称 | 介绍 |
 | :---: | --- |
 | [Framer Motion](https://github.com/motiondivision/motion) | 适用于 React 和 JavaScript 的现代动画库。|
+| [GSAP](https://github.com/greensock/GSAP) | 用于现代web的JavaScript动画库 |
+| [Animejs](https://github.com/juliangarnier/anime) | 快速、多用途且轻量级的JavaScript动画库 |
+
+## 富文本编辑器
+
+| 名称 | 介绍 |
+| :---: | --- |
+| [Tiptap](https://github.com/ueberdosis/tiptap) | 一个web开发的Headless富文本编辑器框架 |
+| [Plate.js](https://github.com/udecode/plate)| 集合AI/MCP/shadcn-ui的富文本编辑器 |
+| [Milkdown](https://github.com/Milkdown/milkdown)| 由插件驱动且所见即所得的markdown编辑器框架 |
+| [TinyMCE](https://github.com/tinymce/tinymce)| 最值得信赖且功能丰富的所见即所得富文本编辑器 |
 
 ## Node 框架
 
