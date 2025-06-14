@@ -139,10 +139,6 @@ export default defineConfig({
         icon: "github",
         link: "https://github.com/aloniacode/fucking-web-interview",
       },
-      {
-        icon: "bilibili",
-        link: "https://space.bilibili.com/164577534",
-      },
     ],
     footer: {
       copyright: "Made with ❤️ by Alonia",
