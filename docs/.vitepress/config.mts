@@ -145,7 +145,7 @@ export default defineConfig({
       },
     ],
     footer: {
-      copyright: "Made with ❤️ by Time1sMoney",
+      copyright: "Made with ❤️ by Alonia",
     },
     search: {
       provider: "local",
