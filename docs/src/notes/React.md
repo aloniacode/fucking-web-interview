@@ -144,7 +144,19 @@ React Hooks 是 React 16.8 引入的重大特性，它允许函数组件使用�
 - `useContext`: 用于访问 React 的上下文（Context）。<Tag text="常用"  />
 - `useRef`: 用于创建一个可变的引用对象，通常用于访问 DOM 元素或存储可变值。<Tag text="常用"  />
 - `useMemo`: 用于缓存计算结果，避免在每次渲染时都重新计算。<Tag text="常用"  />
-- `useCallback`: 用于缓存回调函数，避免在每次渲染时都创建新的回调。<Tag text="常用"  />
+- `useCallback`: 用于缓存回调函数，避免在每次渲染时都创建新的回调。注意，本质上，React内部是通过`useMemo`来实现的`useCallback`。<Tag text="常用"  />
+```ts
+// 缓存函数
+const fn = useCallback(() => {
+    doSomethings()
+},[])
+// 等价实现
+const fn = useMemo(() => {
+  return () => {
+    doSomethings()
+  }
+},[])
+```
 - `useImperativeHandle`: 用于自定义暴露给父组件的值，通常与 `forwardRef` 一起使用。
 
 18 版本新引入的 hooks:
