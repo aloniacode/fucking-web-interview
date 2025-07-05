@@ -145,6 +145,7 @@ React Hooks 是 React 16.8 引入的重大特性，它允许函数组件使用�
 - `useRef`: 用于创建一个可变的引用对象，通常用于访问 DOM 元素或存储可变值。<Tag text="常用"  />
 - `useMemo`: 用于缓存计算结果，避免在每次渲染时都重新计算。<Tag text="常用"  />
 - `useCallback`: 用于缓存回调函数，避免在每次渲染时都创建新的回调。注意，本质上，React内部是通过`useMemo`来实现的`useCallback`。<Tag text="常用"  />
+
 ```ts
 // 缓存函数
 const fn = useCallback(() => {
@@ -157,6 +158,7 @@ const fn = useMemo(() => {
   }
 },[])
 ```
+
 - `useImperativeHandle`: 用于自定义暴露给父组件的值，通常与 `forwardRef` 一起使用。
 
 18 版本新引入的 hooks:
@@ -476,6 +478,51 @@ React 自己实现了一套事件系统，它的事件是合成事件，主要�
 ## React 为什么在处理列表时推荐使用唯一的 key 属性？这与 DIFF 算法有什么关系？
 
 React 中需要在列表元素或动态生成元素上使用 key 属性用作元素的唯一标识，让每一个元素具有唯一性，在 DIFF 过程中通过比较新旧元素，如果有 key 相同的新旧节点时，则会执行移动操作，而不会执行先删除旧节点再创建新节点的操作，并且通过唯一 key 值可以在 DIFF 过程中快速定位对应元素，从而减少 DIFF 算法的时间复杂度，这些都大大提高了 React 的性能和效率。
+
+## 为什么React要自己实现`requestIdleCallback`？
+
+1. 兼容性和差异性。原生`requestIdleCallback`并非在所有浏览器中都支持，并且实现方式的差异会导致行为差异，例如，截至目前，Safari 26.0版本还未支持。React通过自己实现，可以确保在各种环境中行为一致。具体兼容性请查看[Can I Use - requestIdleCallback](https://caniuse.com/requestidlecallback)。
+
+2. 更精细的任务调度。React的内部调度器可以根据自己的策略来优先处理任务，例如将一些不紧急的任务放在空闲时段执行，而不是完全依赖于浏览器的调度机制。
+
+3. 与React协调机制集成。React能够更好地将空闲回调与Fiber架构以及并发模式特性配合使用，从而实现任务的中断和恢复。
+
+4. 执行时机问题。 W3C规定，`requestIdleCallback`的回调函数执行间隔是50ms,也就是说1秒内执行20次，在20个帧之间调用，间隔较长。
+
+总结：React自己实现`requestIdleCallback`是为了抹平浏览器差异，确保行为一致并更好地与React协调机制配合来控制任务的调度、中断和恢复。
+
+## 说说`requestIdleCallback`的替代方案？
+
+替代方案： `MessageChannel` + `requestAnimationFrame`，这是早期React版本中自定义调度器的实现。
+
+```js
+const channel = new MessageChannel();
+let isScheduled = false;
+
+channel.port1.onmessage = () => {
+  isScheduled = false;
+  doWork(); // 执行低优先级任务
+};
+
+function scheduleWork() {
+  if (!isScheduled) {
+    isScheduled = true;
+    channel.port2.postMessage(null); // 触发 port1 的 onmessage 回调
+  }
+}
+```
+
+原因：
+
+1. 兼容性更好。相比于`requestIdleCallback`，现代浏览器基本都支持`MessageChannel` 和`requestAnimationFrame`。
+
+2. 根据**现代浏览器事件循环模型**，`MessageChannel`回调函数执行时机比`setTimeout(fn,0)`的回调函数时机更早，这让它在某些场景下可以模拟浏览器内部的异步调度行为。
+
+3. `requestAnimationFrame`的回调函数执行时机在下一次重绘之前，同样早于`setTimeout`。利用它可以实现类似“在下一帧之前安排优先级任务”的功能。
+
+4. 独立于浏览器内置调度机制，可以绕过`requestIdleCallback`不可用或行为不一致的问题，实现跨平台统一行为。
+
+因此，选择它们来实现调度器，正是因为兼容性好，响应较快，可控性强，适合构建异步调度机制的基础。
 
 ## 为什么建议传递给 setState 的参数是一个 callback 而不是一个对象/值？
 
