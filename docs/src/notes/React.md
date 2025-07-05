@@ -285,7 +285,7 @@ React 执行流程：JSX -> `React.createElement()` -> Fiber Node -> DOM render
 
 我们编写的 JSX 代码会被 React 在底层使用`createElement`转换为 JS 对象，这个对象就是虚拟 DOM，16.8 后 React 实现了一套新的调度算法，使用到的结构就是 fiber 树（类似于虚拟 DOM 树，但同时也就有链表的结构），Fiber 树也是用来描述 DOM 结构的，它的每个节点就是 Fiber Node，代表了一个工作单元，包含了组件相关的信息，同时它还是 React 调度和更新机制的核心组成。
 
-Fiber 结构如下源码所示，Fiber 也可以理解为更加强大的虚拟 DOM ：
+Fiber 也可以理解为更加强大的虚拟 DOM , Fiber 结构如下源码所示，具体代码请查看[Github](https://github.com/facebook/react/blob/main/packages/react-reconciler/src/ReactFiber.js).
 
 ```js
 function FiberNode(
