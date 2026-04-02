@@ -29,11 +29,14 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }: MouseEvent) => {
         await nextTick()
     }).ready
 
+    const clipPathKeyframes = isDark.value ? [...clipPath].reverse() : clipPath
+
     document.documentElement.animate(
-        { clipPath: isDark.value ? clipPath.reverse() : clipPath },
+        { clipPath: clipPathKeyframes },
         {
             duration: 300,
             easing: 'ease-in',
+            fill: 'both',
             pseudoElement: `::view-transition-${isDark.value ? 'old' : 'new'}(root)`
         }
     )
