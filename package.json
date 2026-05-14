@@ -18,7 +18,6 @@
     "vitepress-plugin-llms": "^1.1.3"
   },
   "dependencies": {
-    "@catppuccin/vitepress": "^0.1.2",
     "dayjs": "^1.11.13",
     "typeit": "^8.8.7",
     "vitepress-plugin-51la": "^0.1.0",
