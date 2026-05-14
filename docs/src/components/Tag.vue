@@ -4,7 +4,7 @@ interface Props {
     textColor: string;
     bgColor: string;
 }
-const { text, textColor = '#fff', bgColor = 'oklch(0.52 0.105 223.128)' } = defineProps<Props>()
+const { text, textColor = '#fff', bgColor = '#c96442' } = defineProps<Props>()
 </script>
 
 <template>
@@ -15,8 +15,9 @@ const { text, textColor = '#fff', bgColor = 'oklch(0.52 0.105 223.128)' } = defi
 
 <style scoped>
 .container {
-    padding: 2px 6px;
+    padding: 2px 8px;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 500;
 }
 </style>
