@@ -35,29 +35,26 @@ onMounted(() => {
 }
 
 .hero-tagline {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     font-family: var(--vp-font-family-base);
-    font-weight: bolder;
-    color: var(--vp-c-text-2);
-    white-space: pre-wrap;
+    color: var(--vp-c-text-3);
 }
 
 .hero-description {
-    font-size: 2rem;
+    font-size: 1.25rem;
     font-family: var(--vp-font-family-base);
-    font-weight: bolder;
+    font-weight: 500;
     color: var(--vp-c-text-2);
-    line-height: 2.2rem;
-    -webkit-text-stroke: 0.01rem var(--vp-c-brand-1);
+    line-height: 1.6;
 }
 
 .hero-title {
-    line-height: 3.2rem;
+    line-height: 1.2;
     color: transparent;
-    font-size: 3rem;
-    font-family: var(--vp-font-family-base);
-    font-weight: bolder;
-    background: linear-gradient(120deg, var(--vp-c-brand-1) 30%, #41d1ff);
+    font-size: 3.5rem;
+    font-family: Georgia, 'Noto Serif SC', serif;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--vp-c-text-1) 30%, var(--vp-c-brand-1));
     background-clip: text;
     -webkit-background-clip: text;
 }
