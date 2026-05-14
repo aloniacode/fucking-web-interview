@@ -1,8 +1,8 @@
 import type { Theme } from "vitepress";
-import catppuccinTheme from "./catppuccin.theme";
+import warmTheme from "./warm.theme";
 import Layout from "./Layout.vue";
 export default {
-  extends: catppuccinTheme,
+  extends: warmTheme,
   enhanceApp({ app }) {
     // 注册自定义全局组件
     app.component("Tag");
