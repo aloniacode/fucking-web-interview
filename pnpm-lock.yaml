@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@catppuccin/vitepress':
-        specifier: ^0.1.2
-        version: 0.1.2(typescript@5.8.3)
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -121,11 +118,6 @@ packages:
   '@babel/types@7.27.1':
     resolution: {integrity: sha512-+EzkxvLNfiUeKMgy/3luqfsCWFRXLb7U6wNQTk60tovuckwB15B191tJWvpp4HjiQWdJkCxO3Wbvc6jlk3Xb2Q==}
     engines: {node: '>=6.9.0'}
-
-  '@catppuccin/vitepress@0.1.2':
-    resolution: {integrity: sha512-dqhgo6U6GWbgh3McAgwemUC8Y2Aj48rRcQx/9iuPzBPAgo7NA3yi7ZcR0wolAENMmoOMAHBV+rz/5DfiGxtZLA==}
-    peerDependencies:
-      typescript: ^5.0.0
 
   '@docsearch/css@3.8.2':
     resolution: {integrity: sha512-y05ayQFyUmCXze79+56v/4HpycYF3uFqB78pLPrSV5ZKAlDuIAAJNhaRi8tTdRNXh05yxX/TyNnzD6LwSM89vQ==}
@@ -1207,10 +1199,6 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.27.1
 
-  '@catppuccin/vitepress@0.1.2(typescript@5.8.3)':
-    dependencies:
-      typescript: 5.8.3
-
   '@docsearch/css@3.8.2': {}
 
   '@docsearch/js@3.8.2(@algolia/client-search@5.20.4)(search-insights@2.17.3)':
@@ -2113,7 +2101,8 @@ snapshots:
     dependencies:
       '@types/web-animations-js': 2.2.16
 
-  typescript@5.8.3: {}
+  typescript@5.8.3:
+    optional: true
 
   unified@11.0.5:
     dependencies:
