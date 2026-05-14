@@ -13,10 +13,16 @@ hero:
       link: /notes/HTML
 
 features:
-  - icon: 📖
-    title: 学习 Learning
+  - icon: 📚
+    title: 基础八股
+    details: 覆盖 HTML、CSS、JavaScript、TypeScript、React、Vue、NodeJS、工程化、计算机网络、浏览器等核心领域，系统化整理高频面试题。
   - icon: 🧠
-    title: 思考 Thinking
-  - icon: 🧑‍💻
-    title: 实践 Practice
+    title: 进阶技巧
+    details: 数据结构与算法、设计模式、场景题，助你应对面试中的开放性问题和技术深挖。
+  - icon: 💻
+    title: 代码实践
+    details: 手写代码合集与最佳实践，从 polyfill 到框架原理，用代码说话。
+  - icon: 🎯
+    title: 真实面经
+    details: 汇集多位工程师的面试实录，了解面试流程和高频考题，知己知彼。
 ---
